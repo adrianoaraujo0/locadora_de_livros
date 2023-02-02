@@ -1,7 +1,8 @@
-
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:locadora_de_livros/ui/list_users/users_page.dart';
 import 'package:locadora_de_livros/utils/app_colors.dart';
 
 class DrawerComponent extends StatefulWidget {
@@ -48,7 +49,7 @@ class _DrawerComponentState extends State<DrawerComponent> {
                   height: 80,
                   width: 80,
                   decoration: BoxDecoration(
-                    color: appColors.white,
+                    border: Border.all(color: Colors.white, width: 3),
                     borderRadius: BorderRadius.circular(40),
                     image: const DecorationImage(image: AssetImage("assets/images/user.png"))
                   ),
@@ -65,28 +66,42 @@ class _DrawerComponentState extends State<DrawerComponent> {
     return Column(
       children: [
         //INICIO, USUARIO, EDITORAS, LIVROS, ALUGUEIS
-        itemDrawer("Início", Icons.house),
+        itemDrawer("Início", Icons.house,  ListUserPage()),
+        const SizedBox(height: 30),
+        itemDrawer("Usuários", Icons.person,  ListUserPage()),
+        const SizedBox(height: 30),
+        itemDrawer("Editoras", Icons.library_books,  ListUserPage()),
+        const SizedBox(height: 30),
+        itemDrawer("Livros", Icons.menu_book_rounded,  ListUserPage()),
+        const SizedBox(height: 30),
+        itemDrawer("Aluguéis", Icons.calendar_month,  ListUserPage()),
       ],
     );
   }
 
-   Widget itemDrawer(String name, IconData icon){
+   Widget itemDrawer(String name, IconData icon, dynamic route){
     return InkWell(
-      child: Row(
-        children: [
-          Expanded(
-            child: Row(
-              children: [
-                Icon(Icons.house),
-                const SizedBox(width: 10),
-                Text(name),
-              ],
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder:(context) => route)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Row(
+          children: [
+            Expanded(
+              child: Row(
+                children: [
+                  Icon(icon, size: 30),
+                  const SizedBox(width: 10),
+                  Text(name, style: const TextStyle(fontSize: 20)),
+                ],
+              ),
             ),
-          ),
-          const Icon(Icons.arrow_right)
-        ]
+            const Icon(Icons.arrow_forward_ios_rounded)
+          ]
+        ),
       ),      
     );
   }
+
+
 }
 
