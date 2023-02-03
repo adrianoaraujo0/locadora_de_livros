@@ -1,12 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:locadora_de_livros/model/book.dart';
 import 'package:locadora_de_livros/ui/create_book/create_book_page.dart';
 import 'package:locadora_de_livros/ui/list_book/list_book_controller.dart';
 import 'package:locadora_de_livros/utils/app_colors.dart';
 
-class ListBooksPages extends StatelessWidget {
+class ListBooksPages extends StatefulWidget {
   ListBooksPages({super.key});
 
+  @override
+  State<ListBooksPages> createState() => _ListBooksPagesState();
+}
+
+class _ListBooksPagesState extends State<ListBooksPages> {
   final ListBooksController listBooksController = ListBooksController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    listBooksController.initListBookPage();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,25 +31,31 @@ class ListBooksPages extends StatelessWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () => Navigator.push(context,MaterialPageRoute(builder: (context) => CreateBookPage())), 
+            onPressed: () {
+              Navigator.push(
+                context,MaterialPageRoute( builder: (context) => CreateBookPage())
+              ).then((_) async => await listBooksController.initListBookPage());
+            }, 
             icon: const Icon( Icons.add))
         ],
       ),
-      body: Stack(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            child: Column(
-              children: [
-                searchWidget(),
-                const SizedBox(height: 15),
-                listViewUsers(context)
-              ],
+      body: SingleChildScrollView(
+        child: Stack(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                children: [
+                  searchWidget(),
+                  const SizedBox(height: 15),
+                  listViewUsers(context)
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -44,6 +63,7 @@ class ListBooksPages extends StatelessWidget {
   Widget searchWidget(){
     return Flexible(
       child: TextField(
+        onChanged: (value) => listBooksController.search(value),
         decoration: InputDecoration(
           hintText: "Insira o nome do livro",
           focusColor: appColors.white,
@@ -55,20 +75,32 @@ class ListBooksPages extends StatelessWidget {
   }
 
   Widget listViewUsers(BuildContext context){
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.8,
-      width: MediaQuery.of(context).size.width,
-      child: ListView.builder(
-        shrinkWrap: true,
-        itemCount: 15,
-        itemBuilder:(context, index) {
-          return itemListViewUsers(index);
-        }, 
-      ),
+    return StreamBuilder<List<Book>>(
+      initialData: null,
+      stream: listBooksController.streamBook.stream,
+      builder: (context, snapshot) {
+        if(snapshot.data == null){
+          return const Center(child: CircularProgressIndicator());
+        }else if(snapshot.data!.isEmpty){
+          return const Center(child: Text("Nenhum livro foi cadastrado.", style: TextStyle(fontSize: 25)));
+        }else{
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.8,
+            width: MediaQuery.of(context).size.width,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: snapshot.data!.length,
+              itemBuilder:(context, index) {
+                return itemListViewUsers(snapshot.data![index] ,index);
+              }, 
+            ),
+          );
+        }
+      }
     );
   }
 
-  Widget itemListViewUsers(int index){
+  Widget itemListViewUsers(Book book ,int index){
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
@@ -83,10 +115,10 @@ class ListBooksPages extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text("Banco de Dados", style: TextStyle(fontSize: 20)),
-                SizedBox(height: 5),
-                Text("Navathe", style: TextStyle(fontSize: 15)),
+              children:  [
+                Text("${book.title}", style: const TextStyle(fontSize: 20)),
+                const SizedBox(height: 5),
+                Text("${book.author}", style: const TextStyle(fontSize: 15)),
               ],
             ),
           ),
@@ -97,5 +129,4 @@ class ListBooksPages extends StatelessWidget {
       ),
     );
   }
-
 }

@@ -34,7 +34,7 @@ class MenuController{
   }
 
   Future<void> getQuantityPublishingCompanies() async{
-    List<PublishingCompany> publishingCompanies = await publishingCompaniesService.gePublishingCompanies();
+    List<PublishingCompany> publishingCompanies = await publishingCompaniesService.getPublishingCompanies();
     menu.quantityPublishingCompanies = publishingCompanies.length;
     streamMenuController.sink.add(menu);
   }

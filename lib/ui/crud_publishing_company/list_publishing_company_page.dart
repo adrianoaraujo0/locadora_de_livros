@@ -75,7 +75,6 @@ class _ListPublishingCompanyState extends State<ListPublishingCompany> {
       initialData: const [],
       stream: listPublishingCompanyController.streamPublishingCompany.stream,
       builder: (context, snapshot) {
-        print(snapshot.data);
         if(snapshot.data == null){
           return const Center(child: CircularProgressIndicator());
         }else if(snapshot.data!.isEmpty){

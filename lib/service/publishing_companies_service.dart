@@ -10,7 +10,7 @@ class PublishingCompaniesService{
 String token = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsaWJyYXJ5V0RBQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiaHR0cDovL3dkYS5ob3B0by5vcmc6ODA2Ni9hcGkvYXV0aGVudGljYXRpb24vbG9naW4iLCJleHAiOjE2NzU0NjAzMTh9.zj05ztkc-eJPrP991tlOgCtn8xC_K4qM8QKDNqQHdj8";
 PublishingCompany publishingCompany = PublishingCompany();  
 
- Future<List<PublishingCompany>> gePublishingCompanies() async{
+ Future<List<PublishingCompany>> getPublishingCompanies() async{
     try{
       Response response = await Dio().get("http://wda.hopto.org:8066/api/publishing-company/list",options: Options(contentType: 'application/json', headers:{ "Authorization": token}),);
       if(response.data.isEmpty)return [];
@@ -21,7 +21,6 @@ PublishingCompany publishingCompany = PublishingCompany();
       log("ERRO PUBLISHING SERVICE $e");
       return [];
     }
-    
   }
 
   Future<void> postPublishingCompany(String name) async{

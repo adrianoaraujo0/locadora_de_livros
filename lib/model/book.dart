@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class Book{
 
   String? id;
@@ -5,9 +7,10 @@ class Book{
   String? author;
   int? quantity;
   DateTime? releaseDate;
+  String? publishingCompanyId;
  
 
-  Book({this.id, this.title, this.author, this.quantity, this.releaseDate});
+  Book({this.id, this.title, this.author, this.quantity, this.releaseDate, this.publishingCompanyId});
   
 
   factory Book.fromMap(Map map) {
@@ -19,6 +22,20 @@ class Book{
       releaseDate: DateTime.parse(map["releaseDate"]),
     );
   }
+
+  Map<String, dynamic> toMap() {
+  final DateFormat formatter = DateFormat('yyyy-MM-dd');
+  final String dateFormatted = formatter.format(releaseDate!);
+
+      Map<String, dynamic> map = {
+        'title': title,
+        'author': author,
+        'quantity': quantity,
+        'releaseDate': dateFormatted,
+        'publishingCompanyId':publishingCompanyId
+      };
+      return map;
+    }
 
 
 }

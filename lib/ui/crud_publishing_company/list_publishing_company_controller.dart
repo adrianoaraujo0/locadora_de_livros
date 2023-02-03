@@ -15,7 +15,7 @@ class ListPublishingCompanyController{
   List<PublishingCompany> publishingCompanies = [];
 
   Future<void> initListPublishingCompanyController() async{
-    publishingCompanies = await publishingCompaniesService.gePublishingCompanies();
+    publishingCompanies = await publishingCompaniesService.getPublishingCompanies();
     streamPublishingCompany.sink.add(publishingCompanies);
   }
 
