@@ -111,7 +111,7 @@ class CreateClientPage extends StatelessWidget {
           child: TextFormField(
             onChanged: (value) {
               if(value.length == 10){
-                client.birthDate = createUserController.convertStringToDateTime(value);
+                // client.birthDate = createUserController.convertStringToDateTime(value);
               }
             },
             controller: createUserController.birthDateController,

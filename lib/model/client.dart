@@ -3,7 +3,7 @@ class Client{
   String? id;
   String? name;
   String? email;
-  DateTime? birthDate;
+  String? birthDate;
   String? cpf;
   String? position;
   String? profilePicture;
@@ -26,6 +26,20 @@ class Client{
       password: map['userCreateRequest.username'],
     );
   }
+
+    Map<String, dynamic> toMap() {
+      Map<String, dynamic> map = {
+        'name': name,
+        'email': email,
+        'birthDate': birthDate,
+        'cpf': cpf,
+        'position': position,
+        'profilePicture': profilePicture,
+        'userCreateRequest.password': password,
+        'userCreateRequest.username': userName,
+      };
+      return map;
+    }
 
 
   @override

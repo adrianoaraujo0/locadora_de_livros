@@ -56,10 +56,6 @@ class _MenuPageState extends State<MenuPage> {
         child: StreamBuilder<Menu>(
           stream: menuController.streamMenuController.stream,
           builder: (context, snapshot) {
-            print(snapshot.data?.quantityBooks);
-            print(snapshot.data?.quantityClients);
-            print(snapshot.data?.quantityPublishingCompanies);
-            print(snapshot.data?.quantityRents);
             if(snapshot.data != null){
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
