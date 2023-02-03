@@ -2,7 +2,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:locadora_de_livros/ui/list_users/users_page.dart';
+import 'package:locadora_de_livros/ui/crud_publishing_company/list_publishing_company_page.dart';
+import 'package:locadora_de_livros/ui/list_book/list_books_page.dart';
+import 'package:locadora_de_livros/ui/list_client/client_page.dart';
 import 'package:locadora_de_livros/utils/app_colors.dart';
 
 class DrawerComponent extends StatefulWidget {
@@ -70,9 +72,9 @@ class _DrawerComponentState extends State<DrawerComponent> {
         const SizedBox(height: 30),
         itemDrawer("Usuários", Icons.person,  ListUserPage()),
         const SizedBox(height: 30),
-        itemDrawer("Editoras", Icons.library_books,  ListUserPage()),
+        itemDrawer("Editoras", Icons.library_books, ListPublishingCompany()),
         const SizedBox(height: 30),
-        itemDrawer("Livros", Icons.menu_book_rounded,  ListUserPage()),
+        itemDrawer("Livros", Icons.menu_book_rounded,  ListBooksPages()),
         const SizedBox(height: 30),
         itemDrawer("Aluguéis", Icons.calendar_month,  ListUserPage()),
       ],
