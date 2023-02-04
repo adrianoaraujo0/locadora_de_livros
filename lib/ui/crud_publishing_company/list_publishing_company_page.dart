@@ -26,7 +26,13 @@ class _ListPublishingCompanyState extends State<ListPublishingCompany> {
       appBar: AppBar(
         backgroundColor: appColors.purple,
         title: const Text("Editoras", style: TextStyle(color: appColors.white)),
-        leading: IconButton(icon: const Icon(Icons.arrow_back, color: appColors.white), onPressed: ()=> Navigator.pop(context)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: appColors.white), 
+          onPressed: () async{
+            FocusScope.of(context).unfocus();
+            await Future.delayed(const Duration(milliseconds: 300)).whenComplete(() => Navigator.pop(context));
+          }
+        ),
         centerTitle: true,
         actions: [
           IconButton(
@@ -72,7 +78,7 @@ class _ListPublishingCompanyState extends State<ListPublishingCompany> {
 
   Widget listViewPublishingCompany(BuildContext context){
     return StreamBuilder<List<PublishingCompany>>(
-      initialData: const [],
+      initialData: null,
       stream: listPublishingCompanyController.streamPublishingCompany.stream,
       builder: (context, snapshot) {
         if(snapshot.data == null){

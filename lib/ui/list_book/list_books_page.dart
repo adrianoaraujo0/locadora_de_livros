@@ -27,7 +27,13 @@ class _ListBooksPagesState extends State<ListBooksPages> {
       appBar: AppBar(
         backgroundColor: appColors.purple,
         title: const Text("Livros", style: TextStyle(color: appColors.white)),
-        leading: IconButton(icon: const Icon(Icons.arrow_back, color: appColors.white), onPressed: ()=> Navigator.pop(context)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: appColors.white), 
+          onPressed: () async{
+            FocusScope.of(context).unfocus();
+            await Future.delayed(const Duration(milliseconds: 300)).whenComplete(() => Navigator.pop(context));
+          }
+         ),
         centerTitle: true,
         actions: [
           IconButton(
@@ -40,21 +46,17 @@ class _ListBooksPagesState extends State<ListBooksPages> {
         ],
       ),
       body: SingleChildScrollView(
-        child: Stack(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              child: Column(
-                children: [
-                  searchWidget(),
-                  const SizedBox(height: 15),
-                  listViewUsers(context)
-                ],
-              ),
-            ),
-          ],
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            children: [
+              searchWidget(),
+              const SizedBox(height: 15),
+              listViewUsers(context)
+            ],
+          ),
         ),
       ),
     );

@@ -40,13 +40,13 @@ class MenuController{
   }
 
   Future<void> getQuantityClient() async{
-    List<Client> clients = await clientService.getClient();
+    List<Client> clients = await clientService.getClients();
     menu.quantityClients = clients.length;
     streamMenuController.sink.add(menu);
   }
 
   Future<void> getQuantityRent() async{
-    List<Rent> rents = await rentService.getRent();
+    List<Rent> rents = await rentService.getRents();
     menu.quantityRents = rents.length;
     streamMenuController.sink.add(menu);
   }

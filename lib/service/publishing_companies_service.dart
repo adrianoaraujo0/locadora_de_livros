@@ -1,18 +1,18 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
-import 'package:http/http.dart' as http;
 import 'package:locadora_de_livros/model/publishing_company.dart';
+import 'package:locadora_de_livros/widgets/main_controller.dart';
 
 
 class PublishingCompaniesService{
+MainController mainController = MainController();
 
-String token = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsaWJyYXJ5V0RBQGdtYWlsLmNvbSIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaXNzIjoiaHR0cDovL3dkYS5ob3B0by5vcmc6ODA2Ni9hcGkvYXV0aGVudGljYXRpb24vbG9naW4iLCJleHAiOjE2NzU0NjAzMTh9.zj05ztkc-eJPrP991tlOgCtn8xC_K4qM8QKDNqQHdj8";
 PublishingCompany publishingCompany = PublishingCompany();  
 
  Future<List<PublishingCompany>> getPublishingCompanies() async{
     try{
-      Response response = await Dio().get("http://wda.hopto.org:8066/api/publishing-company/list",options: Options(contentType: 'application/json', headers:{ "Authorization": token}),);
+      Response response = await Dio().get("http://wda.hopto.org:8066/api/publishing-company/list",options: Options(contentType: 'application/json', headers:{ "Authorization": mainController.token}),);
       if(response.data.isEmpty)return [];
       List<dynamic> listPublishingCompanyInJson =  response.data;
       List<PublishingCompany> publishingCompanies = listPublishingCompanyInJson.map((book) => PublishingCompany.fromMap(book)).toList();
@@ -27,7 +27,7 @@ PublishingCompany publishingCompany = PublishingCompany();
     try{
      Response response = await Dio().post(
         "http://wda.hopto.org:8066/api/publishing-company",
-        options: Options(contentType: 'application/json', headers:{ "Authorization": token}),
+        options: Options(contentType: 'application/json', headers:{ "Authorization": mainController.token}),
         data: {'name': name}
       );
       

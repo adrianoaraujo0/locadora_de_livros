@@ -1,22 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:locadora_de_livros/model/client.dart';
+import 'package:locadora_de_livros/service/client_service.dart';
 import 'package:locadora_de_livros/ui/create_client/create_client_page.dart';
 import 'package:locadora_de_livros/ui/list_client/list_client_controller.dart';
 import 'package:locadora_de_livros/utils/app_colors.dart';
 
-class ListUserPage extends StatelessWidget {
+class ListUserPage extends StatefulWidget {
   ListUserPage({super.key});
 
+  @override
+  State<ListUserPage> createState() => _ListUserPageState();
+}
+
+class _ListUserPageState extends State<ListUserPage> {
   final ListClientController listClientController = ListClientController();
 
   @override
+  void initState() {
+    super.initState();
+    listClientController.initListClientPage();
+
+  }
+
+  @override
   Widget build(BuildContext context) {
-    listClientController.streamListClient.sink.add([Client(name: "TESTE"),Client(name: "AESTE2"),]);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: appColors.purple,
         title: const Text("Clientes", style: TextStyle(color: appColors.white)),
-        leading: IconButton(icon: const Icon(Icons.arrow_back, color: appColors.white), onPressed: ()=> Navigator.pop(context)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back,
+          color: appColors.white),
+          onPressed: ()async {
+            FocusScope.of(context).unfocus();
+            await Future.delayed(const Duration(milliseconds: 300)).whenComplete(() => Navigator.pop(context));
+          }),
         centerTitle: true,
         actions: [
           IconButton(
@@ -24,24 +42,19 @@ class ListUserPage extends StatelessWidget {
             icon: const Icon( Icons.add))
         ],
       ),
-      body: StreamBuilder<List<Client>>(
-        stream: listClientController.streamListClient.stream,
-        builder: (context, snapshot) {
-          if(snapshot.data == null){
-            return const Center(child: Text("Nenhum livro registrado.", style: TextStyle(fontSize: 25)));
-          }else{
-            return Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                children: [
-                  searchWidget(),
-                  const SizedBox(height: 15),
-                  listViewUsers(context, snapshot.data!)
-                ],
-              ),
-            );
-          }
-        }
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          width: double.maxFinite,
+          height: double.maxFinite,
+          child: Column(
+            children: [
+              searchWidget(),
+              const SizedBox(height: 15),
+              listViewUsers(context)
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -49,6 +62,7 @@ class ListUserPage extends StatelessWidget {
   Widget searchWidget(){
     return Flexible(
       child: TextField(
+        onChanged: (value) => listClientController.search(value),
         decoration: InputDecoration(
           hintText: "Insira o nome do usuário",
           focusColor: appColors.white,
@@ -59,17 +73,27 @@ class ListUserPage extends StatelessWidget {
     );
   }
 
-  Widget listViewUsers(BuildContext context, List<Client> clients){
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.8,
-      width: MediaQuery.of(context).size.width,
-      child: ListView.builder(
-        shrinkWrap: true,
-        itemCount: clients.length,
-        itemBuilder:(context, index) {
-          return itemListViewUsers(index, clients[index]);
-        }, 
-      ),
+  Widget listViewUsers(BuildContext context){
+    return StreamBuilder<List<Client>>(
+      stream: listClientController.streamClient.stream,
+      builder: (context, snapshot) {
+        if(snapshot.data == null){
+          return const Center(child: CircularProgressIndicator());
+        }else if(snapshot.data!.isEmpty){
+          return const Center(child: Text("Não há usuários cadastrados"));
+        }
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.8,
+          width: MediaQuery.of(context).size.width,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: snapshot.data!.length,
+            itemBuilder:(context, index) {
+              return itemListViewUsers(index, snapshot.data![index]);
+            }, 
+          ),
+        );
+      }
     );
   }
 
@@ -122,5 +146,4 @@ class ListUserPage extends StatelessWidget {
       ),
     );
   }
-
 }

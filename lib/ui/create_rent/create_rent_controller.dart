@@ -3,17 +3,16 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:locadora_de_livros/model/book.dart';
 import 'package:locadora_de_livros/model/publishing_company.dart';
+import 'package:locadora_de_livros/model/rent.dart';
 import 'package:locadora_de_livros/service/books_service.dart';
-import 'package:locadora_de_livros/service/publishing_companies_service.dart';
-import 'package:locadora_de_livros/ui/list_book/list_book_controller.dart';
 import 'package:locadora_de_livros/utils/app_colors.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:rxdart/rxdart.dart';
 
-class CreateBookController{
+class CreateRentController{
 
 
-  BehaviorSubject<Book> streamForm = BehaviorSubject<Book>();
+  BehaviorSubject<Rent> streamForm = BehaviorSubject<Rent>();
   BehaviorSubject<String> streamPopMenuButton = BehaviorSubject<String>();
 
   BooksService booksService = BooksService();
