@@ -166,11 +166,11 @@ class _MenuPageState extends State<MenuPage> {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Text("$quantity"),
-        const SizedBox(height: 10,),
+        const SizedBox(height: 10),
         AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             height: MediaQuery.of(context).size.height * 0.20,
-            width: 20,
+            width: 30,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25)), color: color),
           )

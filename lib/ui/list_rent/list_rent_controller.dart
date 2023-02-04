@@ -15,8 +15,18 @@ class ListRentController{
   List<Rent> rents = [];
 
   Future<void> initListRentPage() async{
-    rents = await rentService.getRents();
+    // rents = await rentService.getRents();
+    rents = [Rent(bookId: "1", clientId: "", loanDate: DateTime.parse("2023-02-26"), returnDate: DateTime.parse("2023-03-23"))];
     streamRents.sink.add(rents);
+  }
+
+  String convertDateTimeToString(DateTime date){
+    
+    String day = date.day.toString();
+    String month = date.month.toString();
+    String year = date.year.toString();
+    
+    return "${day.padLeft(2,"0")}/${month.padLeft(2,"0")}/${year.padLeft(2,"0")}";
   }
 
   //  void search(String value){

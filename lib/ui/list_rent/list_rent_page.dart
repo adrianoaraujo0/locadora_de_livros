@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:locadora_de_livros/model/rent.dart';
-import 'package:locadora_de_livros/ui/create_book/create_book_page.dart';
 import 'package:locadora_de_livros/ui/create_rent/create_rent_page.dart';
 import 'package:locadora_de_livros/ui/list_rent/list_rent_controller.dart';
+import 'package:locadora_de_livros/ui/updateRent/update_rent_page.dart';
 import 'package:locadora_de_livros/utils/app_colors.dart';
 
 class ListRentPage extends StatefulWidget {
@@ -18,6 +18,8 @@ class _ListRentPageState extends State<ListRentPage> {
   @override
   void initState() {
     super.initState();
+
+    listRentController.initListRentPage();
 
   }
 
@@ -78,7 +80,7 @@ class _ListRentPageState extends State<ListRentPage> {
 
   Widget listViewRent(BuildContext context){
     return StreamBuilder<List<Rent>>(
-      initialData: [Rent()],
+      initialData: null,
       stream: listRentController.streamRents.stream,
       builder: (context, snapshot) {
         if(snapshot.data == null){
@@ -91,9 +93,9 @@ class _ListRentPageState extends State<ListRentPage> {
             width: MediaQuery.of(context).size.width,
             child: ListView.builder(
               shrinkWrap: true,
-              itemCount: 2,
+              itemCount: snapshot.data!.length,
               itemBuilder:(context, index) {
-                return itemListViewRent(index);
+                return itemListViewRent(snapshot.data![index] ,index);
               }, 
             ),
           );
@@ -102,7 +104,7 @@ class _ListRentPageState extends State<ListRentPage> {
     );
   }
 
-  Widget itemListViewRent(int index){
+  Widget itemListViewRent(Rent rent ,int index){
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
@@ -118,20 +120,21 @@ class _ListRentPageState extends State<ListRentPage> {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const  [
+              children: [
                 Text("Cliente: adriano", style: const TextStyle(fontSize: 20)),
                 const SizedBox(height: 5),
                 Text("Livro: Beserk", style: const TextStyle(fontSize: 20)),
                 const SizedBox(height: 5),
-                Text("retirada: 01/02/2023", style: const TextStyle(fontSize: 15)),
+                Text("retirada: ${listRentController.convertDateTimeToString(rent.loanDate!)}", style: const TextStyle(fontSize: 15)),
                 const SizedBox(height: 5),
-                Text("devolução: 05/02/2023", style: const TextStyle(fontSize: 15)),
+                Text("devolução: ${listRentController.convertDateTimeToString(rent.returnDate!)}", style: const TextStyle(fontSize: 15)),
               ],
             ),
           ),
-          const Icon(Icons.edit, color: appColors.grey),
-          const SizedBox(width: 10),
-          const Icon(Icons.delete, color: appColors.red)
+           IconButton(
+            icon: Icon(Icons.edit, color: appColors.grey),
+            onPressed: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateRentPage(rent: rent))),
+          ),
         ]
       ),
     );

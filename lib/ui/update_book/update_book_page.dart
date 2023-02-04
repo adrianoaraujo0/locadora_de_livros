@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:locadora_de_livros/model/book.dart';
-import 'package:locadora_de_livros/ui/create_book/create_book_controller.dart';
 import 'package:locadora_de_livros/ui/update_book/update_book_controller.dart';
 import 'package:locadora_de_livros/utils/app_colors.dart';
 
@@ -20,7 +19,6 @@ class _UpdateBookPageState extends State<UpdateBookPage> {
   @override
   void initState() {
     super.initState();
-
     updateBookController.initUpdatePage(widget.book);
   }
 
@@ -29,7 +27,7 @@ class _UpdateBookPageState extends State<UpdateBookPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: appColors.purple,
-        title: const Text("Cadatro de livro", style: TextStyle(color: appColors.white)),
+        title: const Text("Editar livro", style: TextStyle(color: appColors.white)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: appColors.white), 
           onPressed: () async {
