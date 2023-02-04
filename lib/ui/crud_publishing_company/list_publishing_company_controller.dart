@@ -15,8 +15,10 @@ class ListPublishingCompanyController{
   List<PublishingCompany> publishingCompanies = [];
 
   Future<void> initListPublishingCompanyController() async{
-    publishingCompanies = await publishingCompaniesService.getPublishingCompanies();
-    streamPublishingCompany.sink.add(publishingCompanies);
+    print("vai cadastrar");
+    // publishingCompanies = await publishingCompaniesService.getPublishingCompanies();
+    List<PublishingCompany> publishingCompany = [PublishingCompany(name: "Makron")];
+    streamPublishingCompany.sink.add(publishingCompany);
   }
 
   void validationForm( BuildContext context){

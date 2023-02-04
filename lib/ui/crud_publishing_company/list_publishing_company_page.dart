@@ -16,7 +16,6 @@ class _ListPublishingCompanyState extends State<ListPublishingCompany> {
   @override
   void initState() {
     super.initState();
-
     listPublishingCompanyController.initListPublishingCompanyController();
   }
 
@@ -36,7 +35,7 @@ class _ListPublishingCompanyState extends State<ListPublishingCompany> {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () => showModalBottomSheet(context: context, builder:(context) => bottomSheet(context)), 
+            onPressed: () => showModalBottomSheet(context: context, builder:(context) => bottomSheetCreate(context)), 
             icon: const Icon( Icons.add))
           ],
         ),
@@ -122,15 +121,18 @@ class _ListPublishingCompanyState extends State<ListPublishingCompany> {
               ],
             ),
           ),
-          // const Icon(Icons.edit, color: appColors.grey),
-          const SizedBox(width: 10),
-          // const Icon(Icons.delete, color: appColors.red)
+          IconButton(
+            icon: const Icon(Icons.edit, color: appColors.grey),
+            onPressed: ()=> showModalBottomSheet(
+              context: context, builder:(context) => bottomSheetUpdate(context, publishingCompany)
+            )
+          ),
         ]
       ),
     );
   }
 
-  Widget bottomSheet(BuildContext context){
+  Widget bottomSheetCreate(BuildContext context){
     return Container(
       decoration: const BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30))),
       height: MediaQuery.of(context).size.height * 0.5,
@@ -169,6 +171,40 @@ class _ListPublishingCompanyState extends State<ListPublishingCompany> {
         width: double.maxFinite * 0.8,
         decoration:  BoxDecoration(color: appColors.purple, borderRadius: BorderRadius.circular(20)),
         child: const Center(child: Text("Cadastrar", style: TextStyle(color: appColors.white, fontSize: 20))),
+      ),
+    );
+  }
+
+   Widget bottomSheetUpdate(BuildContext context, PublishingCompany publishingCompany){
+
+    listPublishingCompanyController.publishingCompanyController.text = publishingCompany.name!;
+
+    return Container(
+      decoration: const BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30))),
+      height: MediaQuery.of(context).size.height * 0.5,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        child: Column(
+          children: [
+            Expanded(
+              child: Form(
+                key: listPublishingCompanyController.formKey,
+                child: TextFormField(
+                  decoration: const InputDecoration(hintText: "Nome da editora", suffixIcon: Icon(Icons.apartment)),
+                  controller: listPublishingCompanyController.publishingCompanyController,
+                  validator: (value) {
+                    if(value == null || value.isEmpty){
+                      return "Nome da editora vazio.";
+                    }else{
+                      return null;
+                    }
+                  },
+                ),
+              ),
+            ),
+            buttonCreatePublishingCompany(context)
+          ],
+        ),
       ),
     );
   }

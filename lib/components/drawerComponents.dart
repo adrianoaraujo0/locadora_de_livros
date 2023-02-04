@@ -66,7 +66,7 @@ class _DrawerComponentState extends State<DrawerComponent> {
   Widget bodyDrawer(){
     return Column(
       children: [
-        itemDrawer("Usuários", Icons.person,  ListClientPage()),
+        itemDrawer("Clientes", Icons.person,  ListClientPage()),
         const SizedBox(height: 30),
         itemDrawer("Editoras", Icons.library_books, ListPublishingCompany()),
         const SizedBox(height: 30),
