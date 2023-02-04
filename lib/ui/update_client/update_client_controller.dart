@@ -1,12 +1,10 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:locadora_de_livros/model/client.dart';
 import 'package:locadora_de_livros/utils/app_colors.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:rxdart/subjects.dart';
 
-class CreateUserController{
+class UpdateClientController{
 
   BehaviorSubject<Client> streamForm = BehaviorSubject<Client>();
   BehaviorSubject<String> streamPopMenuButtonPosition = BehaviorSubject<String>();
@@ -14,24 +12,29 @@ class CreateUserController{
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final myFocusNodes = FocusNode();
-  
+
   MaskTextInputFormatter birthDateMask = MaskTextInputFormatter(mask: '##/##/####');
   MaskTextInputFormatter cpfMask = MaskTextInputFormatter(mask: '###.###.###-##');
 
   TextEditingController nameController = TextEditingController();
-  TextEditingController profilePictureController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController cpfController = TextEditingController();
   TextEditingController birthDateController = TextEditingController();
-  TextEditingController positionController = TextEditingController();
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  
-  String? position;
 
+  void initUpdatePage(Client client){
+    nameController.text = client.name!;
+    emailController.text = client.email!;
+    cpfController.text = client.cpf!;
+    birthDateController.text = client.birthDate!;
+    usernameController.text = client.userName!;
+    passwordController.text = client.password!;
+    streamPopMenuButtonPosition.sink.add(client.position!);
+    streamForm.sink.add(client);
+  }
 
-   void validationForm(Client client, BuildContext context){
-    log(client.toString());
+  void validationForm(Client client, BuildContext context){
     if(client.name == null || client.name!.isEmpty){
       alertSnackBar(context, "O nome do usuário está vazio.");
 
@@ -50,13 +53,12 @@ class CreateUserController{
     }else if(client.userName == null || client.userName!.isEmpty){
       alertSnackBar(context, "O nome de login está vazio.");
 
-    }else if(client.password == null || client.password!.isEmpty){
-      alertSnackBar(context, "A senha não esta vazia.");
+    }else if(client.password == null || client.password!.isEmpty || client.password!.length < 6){
+      alertSnackBar(context, "A senha está inválida.");
     }
     else {
       // insertMealDatabase(meal);
       // Navigator.pop(context);
-       "Receita salva com sucesso!";
     }
   }
 
@@ -74,3 +76,4 @@ class CreateUserController{
   }
 
 }
+

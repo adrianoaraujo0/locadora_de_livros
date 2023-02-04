@@ -67,7 +67,7 @@ class _ListRentPageState extends State<ListRentPage> {
       child: TextField(
         // onChanged: (value) => listBooksController.search(value),
         decoration: InputDecoration(
-          hintText: "Insira o nome do livro",
+          hintText: "Insira a data do aluguel",
           focusColor: appColors.white,
           border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
           suffixIcon: IconButton(onPressed: (){}, icon: const Icon(Icons.search))

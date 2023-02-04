@@ -1,10 +1,9 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:locadora_de_livros/ui/crud_publishing_company/list_publishing_company_page.dart';
 import 'package:locadora_de_livros/ui/list_book/list_books_page.dart';
-import 'package:locadora_de_livros/ui/list_client/client_page.dart';
+import 'package:locadora_de_livros/ui/list_client/list_client_page.dart';
 import 'package:locadora_de_livros/ui/list_rent/list_rent_page.dart';
+import 'package:locadora_de_livros/ui/login/login_page.dart';
 import 'package:locadora_de_livros/utils/app_colors.dart';
 
 class DrawerComponent extends StatefulWidget {
@@ -30,7 +29,7 @@ class _DrawerComponentState extends State<DrawerComponent> {
   }
 
   Widget headerDrawer(){
-    return Container(
+    return SizedBox(
       height: MediaQuery.of(context).size.height * 0.3,
       width: MediaQuery.of(context).size.width,
       child: Stack(
@@ -67,13 +66,15 @@ class _DrawerComponentState extends State<DrawerComponent> {
   Widget bodyDrawer(){
     return Column(
       children: [
-        itemDrawer("Usuários", Icons.person,  ListUserPage()),
+        itemDrawer("Usuários", Icons.person,  ListClientPage()),
         const SizedBox(height: 30),
         itemDrawer("Editoras", Icons.library_books, ListPublishingCompany()),
         const SizedBox(height: 30),
         itemDrawer("Livros", Icons.menu_book_rounded,  ListBooksPages()),
         const SizedBox(height: 30),
         itemDrawer("Aluguéis", Icons.calendar_month,  ListRentPage()),
+        const SizedBox(height: 30),
+        itemDrawer("Logout", Icons.logout,  LoginPage()),
       ],
     );
   }

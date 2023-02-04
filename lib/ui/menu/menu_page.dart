@@ -2,7 +2,9 @@ import 'dart:developer';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:locadora_de_livros/model/book.dart';
 import 'package:locadora_de_livros/model/menu.dart';
+import 'package:locadora_de_livros/model/rent.dart';
 import 'package:locadora_de_livros/service/books_service.dart';
 import 'package:locadora_de_livros/ui/menu/menu_controller.dart';
 import 'package:locadora_de_livros/utils/app_colors.dart';
@@ -19,7 +21,6 @@ class MenuPage extends StatefulWidget {
 
 class _MenuPageState extends State<MenuPage> {
 
-  BooksService booksService = BooksService();
   MenuController menuController = MenuController();
 
   @override
@@ -126,11 +127,56 @@ class _MenuPageState extends State<MenuPage> {
         padding: const EdgeInsets.symmetric(vertical: 20),
         child: Column(
           children: [
-            Text("Livros mais alugados", style: TextStyle(fontSize: 25))
+             const Text("Livros mais alugados", style: TextStyle(fontSize: 25)),
+             SizedBox(height: 30),
+            graphicDashboard()
           ],
         ),
       ),
     );
   }
+
+  Widget graphicDashboard(){
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.3,
+      width:  MediaQuery.of(context).size.width * 0.9,
+      decoration: BoxDecoration(border: Border.all(color: appColors.black)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          itemGraphicDashboard(5, appColors.green),
+          SizedBox(width: 20),
+          itemGraphicDashboard(5, appColors.yellow),
+          SizedBox(width: 20),
+          itemGraphicDashboard(5, appColors.grey),
+          SizedBox(width: 20),
+          itemGraphicDashboard(5, appColors.red),
+          SizedBox(width: 20),
+          itemGraphicDashboard(5, appColors.purpleDark),
+          SizedBox(width: 20),
+          itemGraphicDashboard(5, appColors.blue),
+        ]
+      ),
+    );
+  }
+
+  Widget itemGraphicDashboard(int quantity, Color color){
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Text("$quantity"),
+        const SizedBox(height: 10,),
+        AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            height: MediaQuery.of(context).size.height * 0.20,
+            width: 20,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25)), color: color),
+          )
+      ]
+    );
+  }
+
 
 }

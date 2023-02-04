@@ -2,13 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:locadora_de_livros/model/client.dart';
 import 'package:locadora_de_livros/ui/create_client/create_client_controller.dart';
+import 'package:locadora_de_livros/ui/update_client/update_client_controller.dart';
 import 'package:locadora_de_livros/utils/app_colors.dart';
 
-class CreateClientPage extends StatelessWidget {
-  CreateClientPage({super.key});
+class UpdateClientPage extends StatefulWidget {
+  UpdateClientPage({required this.client, super.key});
+  Client client;
 
-  CreateUserController createUserController = CreateUserController();
-  ImagePicker _picker = ImagePicker();
+  @override
+  State<UpdateClientPage> createState() => _UpdateClientPageState();
+}
+
+class _UpdateClientPageState extends State<UpdateClientPage> {
+
+  UpdateClientController updateClientController = UpdateClientController();
+  final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    updateClientController.initUpdatePage(widget.client);    
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +43,7 @@ class CreateClientPage extends StatelessWidget {
       ),
       body: StreamBuilder<Client>(
         initialData: Client(),
-        stream: createUserController.streamForm.stream,
+        stream: updateClientController.streamForm.stream,
         builder: (context, snapshot) {
           return Container(
             height: double.maxFinite,
@@ -55,27 +70,27 @@ class CreateClientPage extends StatelessWidget {
 
   Widget formUser(BuildContext context, Client client){
     return  Form(
-      key: createUserController.formKey,
+      key: updateClientController.formKey,
       child: Column(
         children: [
           TextFormField(
             decoration: const InputDecoration(hintText: "Nome do usuário", suffixIcon: Icon(Icons.person)),
-            controller: createUserController.nameController,
+            controller: updateClientController.nameController,
             onChanged: (value) => client.name = value,
           ),
           const SizedBox(height: 20),
           TextFormField(
             decoration: const InputDecoration(hintText: "Email do usuário", suffixIcon: Icon(Icons.email)),
-            controller: createUserController.emailController,
+            controller: updateClientController.emailController,
             keyboardType: TextInputType.emailAddress,
             onChanged: (value) => client.email = value,
           ),
           const SizedBox(height: 20),
           TextFormField(
             decoration: const InputDecoration(hintText: "Cpf do usuário", suffixIcon: Icon(Icons.wysiwyg)),
-            controller: createUserController.cpfController,
+            controller: updateClientController.cpfController,
             keyboardType: TextInputType.number,
-            inputFormatters: [createUserController.cpfMask],
+            inputFormatters: [updateClientController.cpfMask],
             onChanged: (value) => client.cpf = value,
           ),
           const SizedBox(height: 20),
@@ -83,13 +98,13 @@ class CreateClientPage extends StatelessWidget {
           const SizedBox(height: 20),
           TextFormField(
             decoration: const InputDecoration(hintText: "Nome de login", suffixIcon: Icon(Icons.person)),
-            controller: createUserController.usernameController,
+            controller: updateClientController.usernameController,
             onChanged: (value) => client.userName = value,
           ),
           const SizedBox(height: 20),
           TextFormField(
             decoration: const InputDecoration(hintText: "Senha do usuário", suffixIcon: Icon(Icons.lock)),
-            controller: createUserController.passwordController,
+            controller: updateClientController.passwordController,
             onChanged: (value) => client.password = value,
           ),
           const SizedBox(height: 20),
@@ -112,9 +127,9 @@ class CreateClientPage extends StatelessWidget {
                 // client.birthDate = createUserController.convertStringToDateTime(value);
               }
             },
-            controller: createUserController.birthDateController,
+            controller: updateClientController.birthDateController,
             keyboardType: TextInputType.datetime,
-            inputFormatters: [createUserController.birthDateMask],
+            inputFormatters: [updateClientController.birthDateMask],
               decoration: const InputDecoration(hintText: "Data de nascimento", suffixIcon: Icon(Icons.date_range)),
           ),
         ),
@@ -123,10 +138,9 @@ class CreateClientPage extends StatelessWidget {
     );
   }
 
-
   Widget popMenuButtonPosition(Client client){
     return StreamBuilder<String>(
-      stream: createUserController.streamPopMenuButtonPosition.stream,
+      stream: updateClientController.streamPopMenuButtonPosition.stream,
       builder: (context, snapshot) {
         return PopupMenuButton(
           child: Container(
@@ -147,11 +161,11 @@ class CreateClientPage extends StatelessWidget {
             return [
               PopupMenuItem(onTap: (() {
                 client.position = "ADMINISTRADOR";
-                createUserController.streamPopMenuButtonPosition.sink.add("Admin");
+                updateClientController.streamPopMenuButtonPosition.sink.add("Admin");
               }), child: const  Text('Administrador')),
               PopupMenuItem(onTap: (() {
                 client.position = "CLIENTE";
-                createUserController.streamPopMenuButtonPosition.sink.add("Cliente");
+                updateClientController.streamPopMenuButtonPosition.sink.add("Cliente");
               }), child: const Text('Cliente')),
             ];
           }, 
@@ -162,7 +176,7 @@ class CreateClientPage extends StatelessWidget {
 
   Widget addImage(Client client){
     return StreamBuilder<bool>(
-      stream: createUserController.streamAddImage.stream,
+      stream: updateClientController.streamAddImage.stream,
       initialData: false,
       builder: (context, snapshot) {
         if(snapshot.data == false){
@@ -171,7 +185,7 @@ class CreateClientPage extends StatelessWidget {
               final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
               if(image != null){
                 client.profilePicture = image.path;
-                createUserController.streamAddImage.sink.add(true);
+                updateClientController.streamAddImage.sink.add(true);
               }
             } ,
             child: Row(
@@ -215,12 +229,12 @@ class CreateClientPage extends StatelessWidget {
 
   Widget buttonCreateUser(BuildContext context, Client client){
     return InkWell(
-      onTap: ()=> createUserController.validationForm(client, context),
+      onTap: ()=> updateClientController.validationForm(client, context),
       child: Container(
         height: 50,
         width: double.maxFinite * 0.8,
         decoration:  BoxDecoration(color: appColors.purple, borderRadius: BorderRadius.circular(20)),
-        child: const Center(child: Text("Cadastrar", style: TextStyle(color: appColors.white, fontSize: 20))),
+        child: const Center(child: Text("Atualizar", style: TextStyle(color: appColors.white, fontSize: 20))),
       ),
     );
   }

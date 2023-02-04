@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:locadora_de_livros/model/book.dart';
@@ -15,15 +14,6 @@ class CreateRentController{
   BehaviorSubject<Rent> streamForm = BehaviorSubject<Rent>();
   BehaviorSubject<String> streamPopMenuButton = BehaviorSubject<String>();
 
-  BooksService booksService = BooksService();
-
-  MaskTextInputFormatter releaseDateMask = MaskTextInputFormatter(mask: '##/##/####');
-  MaskTextInputFormatter quantityMask = MaskTextInputFormatter(mask: '#####');
-
-  TextEditingController titleController = TextEditingController();
-  TextEditingController authorController = TextEditingController();
-  TextEditingController dateController = TextEditingController();
-  TextEditingController quantityController = TextEditingController();
 
 
   List<PublishingCompany>  publishingCompanies = [];
@@ -31,41 +21,23 @@ class CreateRentController{
   Future<void> initPopButton() async{
   }
 
-  void clearAll(){
-    titleController.clear();
-    authorController.clear();
-    dateController.clear();
-    quantityController.clear();
-    streamPopMenuButton.sink.add("");
-  }
 
-   void validationForm(Book book, BuildContext context){
-    log("${book.quantity}");
-    if(book.title == null || book.title!.isEmpty){
-      alertSnackBar(context, "O título do livro está vazio.");
 
-    }else if(book.author == null || book.author!.isEmpty){
-      alertSnackBar(context, "O nome do author vazio.");
+   void validationForm(BuildContext context ,Rent rent){
+    if(rent.clientId == null || rent.clientId!.isEmpty){
+      alertSnackBar(context, "Escolha o usuário.");
 
-    }else if(book.releaseDate == null){
-      alertSnackBar(context, "A data de lançamento está incorreta.");
+    }else if(rent.bookId  == null || rent.bookId!.isEmpty){
+      alertSnackBar(context, "Escolha o livro.");
 
-    }else if(book.releaseDate!.isAfter(DateTime.now())){
-      alertSnackBar(context, "A data de lançamento não pode ser depois da data atual.");
+    }else if(rent.loanDate == null){
+      alertSnackBar(context, "Escolha a data de retirada.");
 
-    }else if(book.quantity == null){
-      alertSnackBar(context, "A quantidade está vazia.");
+    }else if(rent.returnDate == null){
+      alertSnackBar(context, "Escolha a data de devolução.");
 
-    }else if(book.quantity == 0){
-      alertSnackBar(context, "A quantidade não pode ser 0.");
-    }
-    else if(book.publishingCompanyId == null){
-      alertSnackBar(context, "Escolha uma editora.");
-    }
-    else {
-      saveBook(book);
-      clearAll();
-      alertSnackBar(context, "Livro cadastrado com sucesso!", color: appColors.green);
+    }else {
+      alertSnackBar(context, "Aluguel cadastrado com sucesso!", color: appColors.green);
     }
   }
 
@@ -84,9 +56,46 @@ class CreateRentController{
     return ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message), backgroundColor: color??appColors.red));
   }
 
-  Future<void> saveBook(Book book) async => await booksService.postBook(book);
+  // Future<void> saveBook(Book book) async => await booksService.postBook(book);
 
  
+ Future<void> pickLoanDate(BuildContext context, Rent rent) async{
+  DateTime? pickedDate = await showDatePicker(
+    context: context,
+    initialDate: DateTime.now(),
+    firstDate: DateTime(2023),
+    lastDate: DateTime.now()
+  );
+  
+    if(pickedDate != null){
+      rent.loanDate = pickedDate;
+      streamForm.sink.add(rent);
+    }
+  }
+
+  Future<void> pickReturnDate(BuildContext context, Rent rent) async{
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100)
+    );
+  
+    if(pickedDate != null){
+      rent.returnDate = pickedDate;
+      streamForm.sink.add(rent);
+    }
+  }
+
+  String convertDateToString(DateTime dateTime){
+
+    String day = dateTime.day.toString();
+    String month = dateTime.month.toString();
+    String year = dateTime.year.toString();
+
+    return "${day.padLeft(2, "0")}/${month.padLeft(2, "0")}/$year";
+
+  }
 
 }
 

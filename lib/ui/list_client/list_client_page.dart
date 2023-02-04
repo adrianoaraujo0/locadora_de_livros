@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:locadora_de_livros/model/client.dart';
-import 'package:locadora_de_livros/service/client_service.dart';
 import 'package:locadora_de_livros/ui/create_client/create_client_page.dart';
 import 'package:locadora_de_livros/ui/list_client/list_client_controller.dart';
+import 'package:locadora_de_livros/ui/update_client/update_client_page.dart';
 import 'package:locadora_de_livros/utils/app_colors.dart';
 
-class ListUserPage extends StatefulWidget {
-  ListUserPage({super.key});
+class ListClientPage extends StatefulWidget {
+  ListClientPage({super.key});
 
   @override
-  State<ListUserPage> createState() => _ListUserPageState();
+  State<ListClientPage> createState() => _ListClientPageState();
 }
 
-class _ListUserPageState extends State<ListUserPage> {
+class _ListClientPageState extends State<ListClientPage> {
   final ListClientController listClientController = ListClientController();
 
   @override
@@ -119,30 +119,11 @@ class _ListUserPageState extends State<ListUserPage> {
               ],
             ),
           ),
-          const Icon(Icons.edit, color: appColors.grey),
-          const SizedBox(width: 10),
-          const Icon(Icons.delete, color: appColors.red)
-        ]
-      ),
-    );
-  }
-
-  Widget addButton(BuildContext context){
-    return InkWell(
-      onTap: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => CreateClientPage())),
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
-        decoration: const BoxDecoration(borderRadius: BorderRadius.only(topLeft: Radius.circular(65)),color: appColors.purple),
-        height: 70,
-        width: 120,
-        child: Center(
-          child: Container(
-            height: 40,
-            width: 40,
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(50), color: appColors.purpleDark),
-            child: const Icon(Icons.add, color: appColors.white),
+          InkWell(
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateClientPage(client: client,))),
+            child: const Icon(Icons.edit, color: appColors.grey)
           ),
-        ),
+        ]
       ),
     );
   }

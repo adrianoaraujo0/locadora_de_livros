@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:locadora_de_livros/model/book.dart';
 import 'package:locadora_de_livros/model/rent.dart';
-import 'package:locadora_de_livros/ui/create_book/create_book_controller.dart';
 import 'package:locadora_de_livros/ui/create_rent/create_rent_controller.dart';
 import 'package:locadora_de_livros/utils/app_colors.dart';
 
@@ -44,18 +43,16 @@ class _CreateRentPageState extends State<CreateRentPage> {
           return Container(
             height: double.maxFinite,
             width: double.maxFinite,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // formUser(context, snapshot.data!),
-                    // const SizedBox(height: 100),
-                    // buttonCreateUser(context ,snapshot.data!),
-                  ],
-                ),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  formRent(snapshot.data!),
+                  const  SizedBox(height: 100),
+                  buttonCreateUser(context, snapshot.data!),
+                ],
               ),
             ),
           );
@@ -64,18 +61,87 @@ class _CreateRentPageState extends State<CreateRentPage> {
     );
   }
 
-  Widget formUser(BuildContext context, Book book){
+  Widget formRent(Rent rent){
     return  Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        popMenuButtonClient(book),
+        popMenuButtonClient(rent),
         const SizedBox(height: 20),
-        popMenuButtonBook(book)
+        popMenuButtonBook(rent),
+        const SizedBox(height: 20),
+        dateButton(
+          "Data de retirada: ${
+              rent.loanDate != null
+              ? createRentController.convertDateToString(rent.loanDate!)
+              :"--/--/----"
+            }",
+           rent,
+           isLoanDate: true
+        ),
+        const SizedBox(height: 20),
+        dateButton(
+          "Data de retirada: ${
+              rent.returnDate != null
+              ? createRentController.convertDateToString(rent.returnDate!)
+              :"--/--/----"
+            }",
+           rent
+        ),
+        const SizedBox(height: 50),
+        showInfoRent(),
+
+      ]
+    );
+  }
+
+  Widget dateButton(String name, Rent rent, {bool isLoanDate = false}){
+    return InkWell(
+      onTap: () async {
+        if(isLoanDate){
+          await createRentController.pickLoanDate(context, rent);
+        }else{
+          await createRentController.pickReturnDate(context, rent);
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        decoration: BoxDecoration(color: appColors.grey, borderRadius: BorderRadius.circular(10)),
+        height: 40,
+        width: double.maxFinite,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children:[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Text(name, style: const TextStyle(color: appColors.white)),
+            ),
+             const Icon(Icons.arrow_drop_down, color: appColors.white),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget showInfoRent(){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(child: Text("Usuário selecionado: Bruna Guimarães", style: TextStyle(fontSize: 20))),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            Expanded(child: Text("Livro selecionado: Berserk", style: TextStyle(fontSize: 20))),
+          ],
+        ),
       ],
     );
   }
 
-   Widget popMenuButtonClient(Book book){
+   Widget popMenuButtonClient(Rent rent){
     return StreamBuilder<String>(
       initialData: "",
       stream: createRentController.streamPopMenuButton.stream,
@@ -87,13 +153,14 @@ class _CreateRentPageState extends State<CreateRentPage> {
             height: 40,
             width: double.maxFinite,
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children:[
-                const Icon(Icons.arrow_drop_down, color: appColors.white),
-                const SizedBox(width: 5),
-                Center(
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Text("Selecione o usuário", style: const TextStyle(color: appColors.white)
-                  )
+                  ),
                 ),
+                const Icon(Icons.arrow_drop_down, color: appColors.white),
               ],
             ),
           ),
@@ -102,6 +169,7 @@ class _CreateRentPageState extends State<CreateRentPage> {
               return PopupMenuItem(
                 child: Text(e.toUpperCase()),
                 onTap: () {
+                  // rent.clientId = 
                   createRentController.streamPopMenuButton.sink.add(e);
                 },
               );
@@ -112,7 +180,7 @@ class _CreateRentPageState extends State<CreateRentPage> {
     );
   }
 
-   Widget popMenuButtonBook(Book book){
+   Widget popMenuButtonBook(Rent rent){
     return StreamBuilder<String>(
       initialData: "",
       stream: createRentController.streamPopMenuButton.stream,
@@ -124,13 +192,14 @@ class _CreateRentPageState extends State<CreateRentPage> {
             height: 40,
             width: double.maxFinite,
             child: Row(
-              children:[
-                const Icon(Icons.arrow_drop_down, color: appColors.white),
-                const SizedBox(width: 5),
-                Center(
-                  child: Text("Selecione o livro", style: const TextStyle(color: appColors.white)
-                  )
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const[
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Text("Selecione o livro", style: TextStyle(color: appColors.white)
+                  ),
                 ),
+                 Icon(Icons.arrow_drop_down, color: appColors.white),
               ],
             ),
           ),
@@ -139,6 +208,7 @@ class _CreateRentPageState extends State<CreateRentPage> {
               return PopupMenuItem(
                 child: Text(e.toUpperCase()),
                 onTap: () {
+                  //  rent.bookId = 
                   createRentController.streamPopMenuButton.sink.add(e);
                 },
               );
@@ -149,9 +219,9 @@ class _CreateRentPageState extends State<CreateRentPage> {
     );
   }
 
-  Widget buttonCreateUser(BuildContext context, Book book){
+  Widget buttonCreateUser(BuildContext context, Rent rent){
     return InkWell(
-      onTap: ()=> createRentController.validationForm(book, context),
+      onTap: ()=> createRentController.validationForm(context, rent),
       child: Container(
         height: 50,
         width: double.maxFinite * 0.8,
