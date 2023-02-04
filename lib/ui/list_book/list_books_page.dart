@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:locadora_de_livros/model/book.dart';
 import 'package:locadora_de_livros/ui/create_book/create_book_page.dart';
 import 'package:locadora_de_livros/ui/list_book/list_book_controller.dart';
+import 'package:locadora_de_livros/ui/update_book/update_book_controller.dart';
+import 'package:locadora_de_livros/ui/update_book/update_book_page.dart';
 import 'package:locadora_de_livros/utils/app_colors.dart';
 
 class ListBooksPages extends StatefulWidget {
@@ -124,9 +126,10 @@ class _ListBooksPagesState extends State<ListBooksPages> {
               ],
             ),
           ),
-          const Icon(Icons.edit, color: appColors.grey),
-          const SizedBox(width: 10),
-          const Icon(Icons.delete, color: appColors.red)
+          IconButton(
+            icon: const Icon(Icons.edit, color: appColors.grey),
+            onPressed: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateBookPage(book: book,)))
+          ),
         ]
       ),
     );
