@@ -15,17 +15,17 @@ class ListPublishingCompanyController{
   List<PublishingCompany> publishingCompanies = [];
 
   Future<void> initListPublishingCompanyController() async{
-    print("vai cadastrar");
-    // publishingCompanies = await publishingCompaniesService.getPublishingCompanies();
-    List<PublishingCompany> publishingCompany = [PublishingCompany(name: "Makron")];
-    streamPublishingCompany.sink.add(publishingCompany);
+    publishingCompanies = await publishingCompaniesService.getPublishingCompanies();
+    streamPublishingCompany.sink.add(publishingCompanies);
   }
 
-  void validationForm( BuildContext context){
+  void validationForm( BuildContext context) async{
     if(publishingCompanyController.text.isEmpty){
        formKey.currentState!.validate();
     }else{
       savePublishingCompany(publishingCompanyController.text);
+      publishingCompanyController.clear();
+      await initListPublishingCompanyController();
       Navigator.pop(context);
     }
   }
@@ -36,7 +36,7 @@ class ListPublishingCompanyController{
   }
 
   void search(String value){
-   List<PublishingCompany> listFilter = publishingCompanies.where((element) => element.name!.contains(value)).toList();
+   List<PublishingCompany> listFilter = publishingCompanies.where((element) => element.name!.toUpperCase().contains(value.toUpperCase())).toList();
    streamPublishingCompany.sink.add(listFilter);
   }
 

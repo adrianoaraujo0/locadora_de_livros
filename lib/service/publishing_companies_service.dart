@@ -31,11 +31,16 @@ PublishingCompany publishingCompany = PublishingCompany();
         data: {'name': name}
       );
       
-      print("POST PUBLI SERVICE RESPONSE DATA: ${response.data}");
+      log("**************** POST PUBLI SERVICE ****************");
+      log("RESPONSE DATA: ${response.data}");
+      log("STATUS CODE: ${response.statusCode}");
+      log("**************** POST PUBLI SERVICE ****************");
       log("${response.statusCode}");
 
     }on DioError catch(e){
-      log("POST PUBLI SERVICE: ${e.response?.statusCode}");
+      log("**************** POST PUBLI SERVICE ****************");
+      log("ERRO STATUS CODE: ${e.response?.statusCode}");
+      log("**************** POST PUBLI SERVICE ****************");
     }
     
   }

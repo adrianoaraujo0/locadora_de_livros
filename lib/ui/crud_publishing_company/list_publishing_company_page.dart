@@ -165,7 +165,7 @@ class _ListPublishingCompanyState extends State<ListPublishingCompany> {
 
   Widget buttonCreatePublishingCompany(BuildContext context){
     return InkWell(
-      onTap: ()=> listPublishingCompanyController.validationForm(context),
+      onTap: () async=> listPublishingCompanyController.validationForm(context),
       child: Container(
         height: 50,
         width: double.maxFinite * 0.8,
