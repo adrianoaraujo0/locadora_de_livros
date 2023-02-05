@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:locadora_de_livros/model/book.dart';
-import 'package:locadora_de_livros/widgets/main_controller.dart';
+import 'package:locadora_de_livros/main_controller.dart';
 
 class BooksService{
 
@@ -27,12 +27,16 @@ MainController mainController = MainController();
         "http://wda.hopto.org:8066/api/books",
         options: Options(contentType: 'application/json', headers:{ "Authorization": mainController.token}),
         data: book.toMap());
-      
-      print("POST BOOKS SERVICE RESPONSE DATA: ${response.data}");
-      log("${response.statusCode}");
+
+      log("**************** POST BOOKS SERVICE ****************");
+      log("RESPONSE DATA: ${response.data}");
+      log("STATUS CODE: ${response.statusCode}");
+      log("**************** POST BOOKS SERVICE ****************");
 
     }on DioError catch(e){
-      log("POST BOOKS SERVICE: ${e.response?.statusCode}");
+      log("**************** POST BOOKS SERVICE ****************");
+      log("ERRO: ${e.response?.statusCode}");
+      log("**************** POST BOOKS SERVICE ****************");
     }
     
   }

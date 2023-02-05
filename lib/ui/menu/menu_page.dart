@@ -2,7 +2,9 @@ import 'dart:developer';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:locadora_de_livros/model/book.dart';
+import 'package:locadora_de_livros/model/graphicBooks.dart';
 import 'package:locadora_de_livros/model/menu.dart';
 import 'package:locadora_de_livros/model/rent.dart';
 import 'package:locadora_de_livros/service/books_service.dart';
@@ -31,15 +33,13 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   Widget build(BuildContext context) {
-    
-
     return Scaffold(
       drawer: const DrawerComponent(),
       appBar: const PreferredSize(preferredSize: Size.fromHeight(40), child: AppBarGlobal()),
       body:  Container( 
         height: MediaQuery.of(context).size.height,
         width:  MediaQuery.of(context).size.width,
-        color: appColors.purple,
+        color: appColors.white,
         child: Column(
           children: [
             menu(),
@@ -53,6 +53,7 @@ class _MenuPageState extends State<MenuPage> {
   Widget menu(){
     return Expanded(
       child: Container(
+        color: appColors.purple,
         width:  MediaQuery.of(context).size.width,
         child: StreamBuilder<Menu>(
           stream: menuController.streamMenuController.stream,
@@ -127,9 +128,23 @@ class _MenuPageState extends State<MenuPage> {
         padding: const EdgeInsets.symmetric(vertical: 20),
         child: Column(
           children: [
-             const Text("Livros mais alugados", style: TextStyle(fontSize: 25)),
-             SizedBox(height: 30),
-            graphicDashboard()
+             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+               children: [
+                 const Text("Livros mais alugados", style: TextStyle(fontSize: 25)),
+                 InkWell(
+                  child: Icon(Icons.more_horiz_outlined)
+                )
+               ],
+             ),
+             const SizedBox(height: 30),
+            //  graphicDashboard(),
+             const SizedBox(height: 10),
+             Row(
+              children: [
+                Container()
+              ],
+             ),
           ],
         ),
       ),
@@ -137,46 +152,88 @@ class _MenuPageState extends State<MenuPage> {
   }
 
   Widget graphicDashboard(){
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.3,
-      width:  MediaQuery.of(context).size.width * 0.9,
-      decoration: BoxDecoration(border: Border.all(color: appColors.black)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          itemGraphicDashboard(5, appColors.green),
-          SizedBox(width: 20),
-          itemGraphicDashboard(5, appColors.yellow),
-          SizedBox(width: 20),
-          itemGraphicDashboard(5, appColors.grey),
-          SizedBox(width: 20),
-          itemGraphicDashboard(5, appColors.red),
-          SizedBox(width: 20),
-          itemGraphicDashboard(5, appColors.purpleDark),
-          SizedBox(width: 20),
-          itemGraphicDashboard(5, appColors.blue),
-        ]
-      ),
+    return StreamBuilder<List<GraphicBooks>>(
+      stream: menuController.streamGraphicBooks.stream,
+      initialData: null,
+      builder: (context, snapshot) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Row(
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height * 0.3,
+                width:  MediaQuery.of(context).size.width * 0.65,
+                decoration: BoxDecoration(border: Border.all(color: appColors.black)),
+                child: Center(
+                  child: snapshot.data == null 
+                   ? const SizedBox()
+                   : listViewBooks(snapshot.data!)
+                ),
+              ),
+              nameBook(snapshot.data!)
+            ],
+          ),
+        );
+      }
     );
   }
 
-  Widget itemGraphicDashboard(int quantity, Color color){
+  Widget listViewBooks(List<GraphicBooks> listBooks){
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: listBooks.length,
+      scrollDirection: Axis.horizontal,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: itemGraphicDashboard(listBooks[index], menuController.colorsDashBoard[index]),
+        );
+      }, 
+    );
+  }
+
+  Widget itemGraphicDashboard(GraphicBooks graphicBooks, Color color){
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Text("$quantity"),
+        Text("${graphicBooks.quantity}"),
         const SizedBox(height: 10),
         AnimatedContainer(
             duration: const Duration(milliseconds: 300),
-            height: MediaQuery.of(context).size.height * 0.20,
-            width: 30,
+            height: MediaQuery.of(context).size.height * (graphicBooks.quantity * 0.0025),
+            width: 20,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25)), color: color),
-          )
+              borderRadius: const BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25)),
+              color: color
+            ),
+        )
       ]
     );
   }
 
-
+  Widget nameBook(List<GraphicBooks> listBooks){
+    return Expanded(
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: listBooks.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  width: 10,
+                  height: 10,
+                  color:  menuController.colorsDashBoard[index]
+                ),
+                const SizedBox(width: 3),
+                Expanded(child: Text(listBooks[index].nameBook))
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
 }

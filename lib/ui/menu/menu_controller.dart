@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:locadora_de_livros/model/book.dart';
 import 'package:locadora_de_livros/model/client.dart';
+import 'package:locadora_de_livros/model/graphicBooks.dart';
 import 'package:locadora_de_livros/model/menu.dart';
 import 'package:locadora_de_livros/model/publishing_company.dart';
 import 'package:locadora_de_livros/model/rent.dart';
@@ -7,12 +9,14 @@ import 'package:locadora_de_livros/service/books_service.dart';
 import 'package:locadora_de_livros/service/client_service.dart';
 import 'package:locadora_de_livros/service/publishing_companies_service.dart';
 import 'package:locadora_de_livros/service/rent_service.dart';
+import 'package:locadora_de_livros/utils/app_colors.dart';
 import 'package:rxdart/rxdart.dart';
 
 class MenuController{
 
   BehaviorSubject<Menu> streamMenuController = BehaviorSubject<Menu>();
-
+  BehaviorSubject<List<GraphicBooks>> streamGraphicBooks = BehaviorSubject<List<GraphicBooks>>();
+  List<Color> colorsDashBoard = [appColors.green, appColors.yellow, appColors.grey, appColors.red, appColors.purpleDark, appColors.blue];
 
   ClientService clientService = ClientService();
   RentService rentService = RentService();
@@ -25,6 +29,16 @@ class MenuController{
     await getQuantityPublishingCompanies();
     await getQuantityClient();
     await getQuantityRent();
+    streamGraphicBooks.sink.add(
+      [
+        GraphicBooks("O contato", 5),
+        GraphicBooks("Naruto HQ", 20),
+        GraphicBooks("O sol é para todos", 50),
+        GraphicBooks("On the road", 100),
+        GraphicBooks("1984", 70),
+        GraphicBooks("A revolução dos bichos", 40),
+      ]
+    );
   }
 
   Future<void> getQuantityBooks() async{

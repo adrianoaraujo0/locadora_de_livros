@@ -14,9 +14,11 @@ class CreateBookController{
 
 
   BehaviorSubject<Book> streamForm = BehaviorSubject<Book>();
-  BehaviorSubject<String> streamPopMenuButton = BehaviorSubject<String>();
+  BehaviorSubject<List<PublishingCompany>> streamPopMenuButtonPublishingCompanies = BehaviorSubject<List<PublishingCompany>>();
+  BehaviorSubject<String> streamTextPopMenuButtonPublishingCompanies = BehaviorSubject<String>();
 
   BooksService booksService = BooksService();
+  PublishingCompaniesService publishingCompaniesService = PublishingCompaniesService();
 
   MaskTextInputFormatter releaseDateMask = MaskTextInputFormatter(mask: '##/##/####');
   MaskTextInputFormatter quantityMask = MaskTextInputFormatter(mask: '#####');
@@ -29,7 +31,8 @@ class CreateBookController{
 
   List<PublishingCompany>  publishingCompanies = [];
 
-  Future<void> initPopButton() async{
+  Future<void> initPageCreateBook() async{
+    await getPublishingCompany();
   }
 
   void clearAll(){
@@ -37,7 +40,7 @@ class CreateBookController{
     authorController.clear();
     dateController.clear();
     quantityController.clear();
-    streamPopMenuButton.sink.add("");
+    streamTextPopMenuButtonPublishingCompanies.sink.add("Editoras");
   }
 
    void validationForm(Book book, BuildContext context){
@@ -57,8 +60,8 @@ class CreateBookController{
     }else if(book.quantity == null){
       alertSnackBar(context, "A quantidade está vazia.");
 
-    }else if(book.quantity == 0){
-      alertSnackBar(context, "A quantidade não pode ser 0.");
+    }else if(book.quantity == 0 || book.quantity! > 100){
+      alertSnackBar(context, "A quantidade não pode ser 0 ou maior que de 100.");
     }
     else if(book.publishingCompanyId == null){
       alertSnackBar(context, "Escolha uma editora.");
@@ -85,6 +88,11 @@ class CreateBookController{
     return ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message), backgroundColor: color??appColors.red));
   }
 
+  Future<void> getPublishingCompany() async{
+    publishingCompanies = await publishingCompaniesService.getPublishingCompanies();
+    streamPopMenuButtonPublishingCompanies.sink.add(publishingCompanies);
+  }
+  
   Future<void> saveBook(Book book) async => await booksService.postBook(book);
 
  

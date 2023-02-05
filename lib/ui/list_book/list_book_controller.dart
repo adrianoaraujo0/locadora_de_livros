@@ -11,8 +11,7 @@ class ListBooksController{
   List<Book> books = [];
 
   Future<void> initListBookPage() async{
-    // books = await booksService.getBooks();
-    books = [Book(title: "O contato", author: "Carl sagan", quantity: 10, releaseDate: DateTime.parse("2012-02-27"))];
+    books = await booksService.getBooks();
     streamBook.sink.add(books);
   }
 

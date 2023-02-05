@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:locadora_de_livros/model/book.dart';
 import 'package:locadora_de_livros/model/client.dart';
+import 'package:locadora_de_livros/model/publishing_company.dart';
 import 'package:locadora_de_livros/ui/create_book/create_book_controller.dart';
 import 'package:locadora_de_livros/utils/app_colors.dart';
 
@@ -20,7 +21,7 @@ class _CreateBookPageState extends State<CreateBookPage> {
   void initState() {
     super.initState();
 
-    createBookController.initPopButton();
+    createBookController.initPageCreateBook();
   }
 
   @override
@@ -112,22 +113,23 @@ class _CreateBookPageState extends State<CreateBookPage> {
   }
 
    Widget popMenuButtonPosition(Book book){
-    return StreamBuilder<String>(
-      initialData: "",
-      stream: createBookController.streamPopMenuButton.stream,
+    return StreamBuilder<List<PublishingCompany>>(
+      initialData: null,
+      stream: createBookController.streamPopMenuButtonPublishingCompanies.stream,
       builder: (_, snapshot) {
         return PopupMenuButton(
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 5),
             decoration: BoxDecoration(color: appColors.grey, borderRadius: BorderRadius.circular(10)),
             height: 40,
-            width: 120,
+            width: 200,
             child: Row(
               children:[
                 const Icon(Icons.arrow_drop_down, color: appColors.white),
-                const SizedBox(width: 5),
+                const SizedBox(width: 5), 
                 Center(
-                  child: Text(snapshot.data!.isEmpty ? "Editoras" : snapshot.data!, style: const TextStyle(color: appColors.white))),
+                  child: streamBuilderTextPopMenuButtonPublishingCompany()
+                ),
               ],
             ),
           ),
@@ -137,7 +139,7 @@ class _CreateBookPageState extends State<CreateBookPage> {
                 child: Text(publishingCompany.name!.toUpperCase()),
                 onTap: () {
                   book.publishingCompanyId = publishingCompany.id;
-                  createBookController.streamPopMenuButton.sink.add(publishingCompany.name!);
+                  createBookController.streamTextPopMenuButtonPublishingCompanies.sink.add(publishingCompany.name!);
                   createBookController.streamForm.sink.add(book);
                 },
               );
@@ -145,6 +147,14 @@ class _CreateBookPageState extends State<CreateBookPage> {
           }, 
         );
       }
+    );
+  }
+
+  Widget streamBuilderTextPopMenuButtonPublishingCompany(){
+    return StreamBuilder<String>(
+      initialData: "Editoras",
+      stream: createBookController.streamTextPopMenuButtonPublishingCompanies.stream,
+      builder: (context, snapshot) => Text(snapshot.data??"Editoras", style: const TextStyle(color: appColors.white)),
     );
   }
 

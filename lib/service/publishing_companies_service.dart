@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:locadora_de_livros/model/publishing_company.dart';
-import 'package:locadora_de_livros/widgets/main_controller.dart';
+import 'package:locadora_de_livros/main_controller.dart';
 
 
 class PublishingCompaniesService{

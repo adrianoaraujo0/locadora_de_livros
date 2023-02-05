@@ -126,10 +126,10 @@ class _ListBooksPagesState extends State<ListBooksPages> {
               ],
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.edit, color: appColors.grey),
-            onPressed: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateBookPage(book: book,)))
-          ),
+          // IconButton(
+          //   icon: const Icon(Icons.edit, color: appColors.grey),
+          //   onPressed: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateBookPage(book: book,)))
+          // ),
         ]
       ),
     );

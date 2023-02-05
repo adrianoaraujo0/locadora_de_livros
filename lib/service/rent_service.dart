@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:locadora_de_livros/model/rent.dart';
-import 'package:locadora_de_livros/widgets/main_controller.dart';
+import 'package:locadora_de_livros/main_controller.dart';
 
 class RentService{
 

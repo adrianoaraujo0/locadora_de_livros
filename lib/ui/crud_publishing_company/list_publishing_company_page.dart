@@ -121,12 +121,12 @@ class _ListPublishingCompanyState extends State<ListPublishingCompany> {
               ],
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.edit, color: appColors.grey),
-            onPressed: ()=> showModalBottomSheet(
-              context: context, builder:(context) => bottomSheetUpdate(context, publishingCompany)
-            )
-          ),
+          // IconButton(
+          //   icon: const Icon(Icons.edit, color: appColors.grey),
+          //   onPressed: ()=> showModalBottomSheet(
+          //     context: context, builder:(context) => bottomSheetUpdate(context, publishingCompany)
+          //   )
+          // ),
         ]
       ),
     );
