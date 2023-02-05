@@ -19,7 +19,7 @@ class _CreateRentPageState extends State<CreateRentPage> {
   @override
   void initState() {
     super.initState();
-
+    createRentController.initCreateRentPage();
   }
 
   @override
@@ -128,13 +128,21 @@ class _CreateRentPageState extends State<CreateRentPage> {
       children: [
         Row(
           children: [
-            Expanded(child: Text("Usuário selecionado: Bruna Guimarães", style: TextStyle(fontSize: 20))),
+            StreamBuilder<String?>(
+              initialData: null,
+              stream: createRentController.streamNameClient.stream,
+              builder: (context, snapshot) => Expanded(child: Text("Usuário selecionado: ${snapshot.data??""}", style: const TextStyle(fontSize: 20)))
+            ),
           ],
         ),
         const SizedBox(height: 10),
         Row(
           children: [
-            Expanded(child: Text("Livro selecionado: Berserk", style: TextStyle(fontSize: 20))),
+            StreamBuilder<String?>(
+              initialData: null,
+              stream: createRentController.streamNameBook.stream,
+              builder: (context, snapshot) => Expanded(child: Text("Livro selecionado: ${snapshot.data??""}", style: const TextStyle(fontSize: 20)))
+            ),
           ],
         ),
       ],
@@ -165,12 +173,13 @@ class _CreateRentPageState extends State<CreateRentPage> {
             ),
           ),
           itemBuilder: (_) {
-            return ["O mundo assombrado pelos demônios", "Beserk", "Naruto", "O mundo de sofia", "On the road"].map((e){
+            return createRentController.clients.map((client){
               return PopupMenuItem(
-                child: Text(e.toUpperCase()),
+                child: Text(client.name!),
                 onTap: () {
-                  // rent.clientId = 
-                  createRentController.streamPopMenuButton.sink.add(e);
+                  rent.clientId = client.id;
+                  createRentController.streamNameClient.sink.add(client.name!);
+                  createRentController.streamForm.sink.add(rent);
                 },
               );
             }).toList();
@@ -204,12 +213,13 @@ class _CreateRentPageState extends State<CreateRentPage> {
             ),
           ),
           itemBuilder: (_) {
-            return ["O mundo assombrado pelos demônios", "Beserk", "Naruto", "O mundo de sofia", "On the road"].map((e){
+            return createRentController.books.map((book){
               return PopupMenuItem(
-                child: Text(e.toUpperCase()),
+                child: Text(book.title!),
                 onTap: () {
-                  //  rent.bookId = 
-                  createRentController.streamPopMenuButton.sink.add(e);
+                   rent.bookId = book.id;
+                  createRentController.streamNameBook.sink.add(book.title!);
+                  createRentController.streamForm.sink.add(rent);
                 },
               );
             }).toList();

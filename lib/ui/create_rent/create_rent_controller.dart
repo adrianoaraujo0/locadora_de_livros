@@ -1,11 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:locadora_de_livros/model/book.dart';
+import 'package:locadora_de_livros/model/client.dart';
 import 'package:locadora_de_livros/model/publishing_company.dart';
 import 'package:locadora_de_livros/model/rent.dart';
 import 'package:locadora_de_livros/service/books_service.dart';
+import 'package:locadora_de_livros/service/client_service.dart';
+import 'package:locadora_de_livros/service/rent_service.dart';
 import 'package:locadora_de_livros/utils/app_colors.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:rxdart/rxdart.dart';
 
 class CreateRentController{
@@ -13,15 +15,39 @@ class CreateRentController{
 
   BehaviorSubject<Rent> streamForm = BehaviorSubject<Rent>();
   BehaviorSubject<String> streamPopMenuButton = BehaviorSubject<String>();
+  BehaviorSubject<String?> streamNameClient = BehaviorSubject<String?>();
+  BehaviorSubject<String?> streamNameBook= BehaviorSubject<String?>();
 
+  BehaviorSubject<List<Client>> streamListClients = BehaviorSubject<List<Client>>();
+  BehaviorSubject<List<Book>> streamListBooks = BehaviorSubject<List<Book>>();
 
+  ClientService clientService = ClientService();
+  BooksService booksService = BooksService();
+  RentService rentService = RentService();
 
-  List<PublishingCompany>  publishingCompanies = [];
+  List<Client>  clients = [];
+  List<Book>  books = [];
 
-  Future<void> initPopButton() async{
+  void clearAll(){
+    streamNameClient.sink.add(null);
+    streamNameBook.sink.add(null);
+    streamForm.sink.add(Rent());
   }
 
+  Future<void> initCreateRentPage() async{
+    await getClients();
+    await getBooks();
+  }
 
+   Future<void> getClients() async {
+    clients = await clientService.getClients();
+    streamListClients.sink.add(clients);
+   }
+
+   Future<void> getBooks() async {
+     books = await booksService.getBooks();
+    streamListBooks.sink.add(books);
+   }
 
    void validationForm(BuildContext context ,Rent rent){
     if(rent.clientId == null || rent.clientId!.isEmpty){
@@ -37,6 +63,8 @@ class CreateRentController{
       alertSnackBar(context, "Escolha a data de devolução.");
 
     }else {
+      rentService.postBook(rent);
+      clearAll();
       alertSnackBar(context, "Aluguel cadastrado com sucesso!", color: appColors.green);
     }
   }
@@ -94,7 +122,6 @@ class CreateRentController{
     String year = dateTime.year.toString();
 
     return "${day.padLeft(2, "0")}/${month.padLeft(2, "0")}/$year";
-
   }
 
 }

@@ -15,8 +15,7 @@ class ListRentController{
   List<Rent> rents = [];
 
   Future<void> initListRentPage() async{
-    // rents = await rentService.getRents();
-    rents = [Rent(bookId: "1", clientId: "", loanDate: DateTime.parse("2023-02-26"), returnDate: DateTime.parse("2023-03-23"))];
+    rents = await rentService.getRents();
     streamRents.sink.add(rents);
   }
 
@@ -29,9 +28,24 @@ class ListRentController{
     return "${day.padLeft(2,"0")}/${month.padLeft(2,"0")}/${year.padLeft(2,"0")}";
   }
 
-  //  void search(String value){
-  //   List<Rent> listFilter = rents.where((element) => element.loanDate!.toUpperCase().contains(value.toUpperCase())).toList();
-  //   streamRents.sink.add(listFilter);
-  // }
+  String convertRentStatus(String rentStatus){
+    if(rentStatus == "DELAY"){
+      return "Atrasado";
+    }if(rentStatus == "ONTIME"){
+      return "Devolvido";
+    }else{
+      return "Em espera";
+    }
+  }
+
+  Future<void> putRent(String id) async{
+    await rentService.putBook(id);
+    await initListRentPage();
+  }
+
+   void search(String value){
+    List<Rent> listFilter = rents.where((element) => element.nameClient!.toUpperCase().contains(value.toUpperCase())).toList();
+    streamRents.sink.add(listFilter);
+  }
 
 }

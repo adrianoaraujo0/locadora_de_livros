@@ -38,7 +38,6 @@ MainController mainController = MainController();
       log("ERRO: ${e.response?.statusCode}");
       log("**************** POST BOOKS SERVICE ****************");
     }
-    
   }
 
 }

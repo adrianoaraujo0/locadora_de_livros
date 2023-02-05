@@ -67,9 +67,9 @@ class _ListRentPageState extends State<ListRentPage> {
   Widget searchWidget(){
     return Flexible(
       child: TextField(
-        // onChanged: (value) => listBooksController.search(value),
+        onChanged: (value) => listRentController.search(value),
         decoration: InputDecoration(
-          hintText: "Insira a data do aluguel",
+          hintText: "Insira o nome do cliente",
           focusColor: appColors.white,
           border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
           suffixIcon: IconButton(onPressed: (){}, icon: const Icon(Icons.search))
@@ -121,22 +121,42 @@ class _ListRentPageState extends State<ListRentPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Cliente: adriano", style: const TextStyle(fontSize: 20)),
+                Text("Cliente: ${rent.nameClient}", style: const TextStyle(fontSize: 20)),
                 const SizedBox(height: 5),
-                Text("Livro: Beserk", style: const TextStyle(fontSize: 20)),
+                Text("Livro: ${rent.nameBook}", style: const TextStyle(fontSize: 20)),
                 const SizedBox(height: 5),
-                Text("retirada: ${listRentController.convertDateTimeToString(rent.loanDate!)}", style: const TextStyle(fontSize: 15)),
+                Row(
+                  children: [
+                    Text("Status: ",  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+                    const SizedBox(width: 5,),
+                    Text(
+                      listRentController.convertRentStatus(rent.rentStatus!), 
+                      style: TextStyle(fontSize: 15, color: validationColorStatus(rent.rentStatus!))
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 5),
-                Text("devolução: ${listRentController.convertDateTimeToString(rent.returnDate!)}", style: const TextStyle(fontSize: 15)),
               ],
             ),
           ),
            IconButton(
-            icon: Icon(Icons.edit, color: appColors.grey),
-            onPressed: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateRentPage(rent: rent))),
+            icon: Icon(Icons.check_box_sharp, color: rent.rentStatus == "RENTED" ? appColors.grey : appColors.green),
+            onPressed: () async {
+              await listRentController.putRent(rent.id!);
+            },
           ),
         ]
       ),
     );
+  }
+
+  Color validationColorStatus(String rentStatus){
+    if(rentStatus == "DELAY"){
+      return appColors.red;
+    }if(rentStatus == "ONTIME"){
+      return appColors.green;
+    }else{
+      return appColors.yellow;
+    } 
   }
 }

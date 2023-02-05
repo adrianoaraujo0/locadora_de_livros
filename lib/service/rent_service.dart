@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
-import 'package:http/http.dart' as http;
 import 'package:locadora_de_livros/model/rent.dart';
 import 'package:locadora_de_livros/main_controller.dart';
 
@@ -21,6 +19,48 @@ MainController mainController = MainController();
     }on DioError catch(e){
       log("POST BOOKS SERVICE: ${e.response?.statusCode}");
       return [];
+    }
+  }
+
+
+  Future<void> postBook(Rent rent) async{
+    try{
+     Response response = await Dio().post(
+        "http://wda.hopto.org:8066/api/rents",
+        options: Options(contentType: 'application/json', headers:{ "Authorization": mainController.token}),
+        data: rent.toMap()
+      );
+
+      log("**************** POST RENT SERVICE ****************");
+      log("RESPONSE DATA: ${response.data}");
+      log("STATUS CODE: ${response.statusCode}");
+      log("**************** POST RENT SERVICE ****************");
+
+    }on DioError catch(e){
+      log("**************** POST RENT SERVICE ****************");
+      log("ERRO: ${e}");
+      log("**************** POST RENT SERVICE ****************");
+    }
+  }
+
+    Future<void> putBook(String id) async{
+      print("ENTROU NO PUT");
+    try{
+     Response response = await Dio().put(
+        "http://wda.hopto.org:8066/api/rents",
+        options: Options(contentType: 'application/json', headers:{ "Authorization": mainController.token}),
+        data: {"id": id}
+      );
+
+      log("**************** PUT RENT SERVICE ****************");
+      log("RESPONSE DATA: ${response.data}");
+      log("STATUS CODE: ${response.statusCode}");
+      log("**************** PUT RENT SERVICE ****************");
+
+    }on DioError catch(e){
+      log("**************** PUT RENT SERVICE ****************");
+      log("ERRO: ${e}");
+      log("**************** PUT RENT SERVICE ****************");
     }
   }
 

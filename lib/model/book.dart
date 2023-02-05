@@ -25,17 +25,17 @@ class Book{
 
   Map<String, dynamic> toMap() {
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
-  final String dateFormatted = formatter.format(releaseDate!);
+  final String releaseDateFormatted = formatter.format(releaseDate!);
 
-      Map<String, dynamic> map = {
-        'title': title,
-        'author': author,
-        'quantity': quantity,
-        'releaseDate': dateFormatted,
-        'publishingCompanyId':publishingCompanyId
-      };
-      return map;
-    }
+    Map<String, dynamic> map = {
+      'title': title,
+      'author': author,
+      'quantity': quantity,
+      'releaseDate': releaseDateFormatted,
+      'publishingCompanyId':publishingCompanyId
+    };
+    return map;
+  }
 
 
 }
