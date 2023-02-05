@@ -27,7 +27,7 @@ class UpdateClientController{
     nameController.text = client.name!;
     emailController.text = client.email!;
     cpfController.text = client.cpf!;
-    birthDateController.text = client.birthDate!;
+    // birthDateController.text = client.birthDate!;
     usernameController.text = client.userName!;
     passwordController.text = client.password!;
     streamPopMenuButtonPosition.sink.add(client.position!);

@@ -38,7 +38,11 @@ class _ListClientPageState extends State<ListClientPage> {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () => Navigator.push(context,MaterialPageRoute(builder: (context) => CreateClientPage())), 
+            onPressed: (){
+               Navigator.push(
+                context,MaterialPageRoute( builder: (context) => CreateClientPage())
+              ).then((_) async => await listClientController.initListClientPage());
+            },
             icon: const Icon( Icons.add))
         ],
       ),
@@ -120,7 +124,10 @@ class _ListClientPageState extends State<ListClientPage> {
             ),
           ),
           InkWell(
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateClientPage(client: client,))),
+            onTap: (){
+              print(client.toString());
+            },
+            // onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateClientPage(client: client))),
             child: const Icon(Icons.edit, color: appColors.grey)
           ),
         ]

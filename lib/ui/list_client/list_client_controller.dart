@@ -13,10 +13,7 @@ class ListClientController{
   List<Client> clients = [];
 
   Future<void> initListClientPage() async{
-    // clients = await clientService.getClients();
-    List<Client> clients = [
-      Client(name: "Adriano araújo", email: "Adriano@g.com", birthDate: "12/08/2000", cpf: "081.050.434-12", position: "Cliente", userName: "Adriano@g.com", password: "123456"),
-    ];
+    clients = await clientService.getClients();
     streamClient.sink.add(clients);
   }
 

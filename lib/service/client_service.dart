@@ -24,48 +24,45 @@ class ClientService{
 
 
 
- Future<void> postClient() async{
+ Future<void> postClient(Client client) async{
     try{
-      Client client = Client(
-        name: "Bruna",
-        birthDate: "2000-08-12", 
-        cpf: "796.740.420-32",
-        email: "Bru@gmail.com",
-        password: "123456",
-        position: "PEOPLE",
-        userName: "Bru@gmail.com",
-        profilePicture: ""
-      );
 
-      FormData data = FormData.fromMap(
-        {
-        "name": "Bruna",
-        "birthDate": "2000-08-12", 
-        "cpf": "796.740.420-32",
-        "email": "Bru@gmail.com",
-        "password": "123456",
-        "position": "PEOPLE",
-        "userName": "Bru@gmail.com",
-        }
-      );
-  
      Response response = await Dio().post(
         "http://wda.hopto.org:8066/api/clients",
         options: Options(
-           method: 'POST',
-          validateStatus: (_) => true,
-          headers:{ "Authorization": mainController.token, Headers.contentTypeHeader: "multipart/form-data"},
+          headers:{ "Authorization": mainController.token, "Content-Type": "multipart/form-data", "accept":"*/*"},
         ),
-        data: data
+        data: await client.toPostFormData()
       );
-      
-      print(response.data);
-      log("${response.statusCode}");
+
+      log("**************** POST CLIENT SERVICE ****************");
+      log("RESPONSE DATA: ${response.data}");
+      log("STATUS CODE: ${response.statusCode}");
+      log("**************** POST CLIENT SERVICE ****************");
 
     }on DioError catch(e){
-      log("POST CLIENT SERVICE: ${e.response?.statusMessage}");
+      log("POST CLIENT SERVICE: ${e}");
     }
-    
+  }
+
+ Future<void> putClient(Client client) async{
+    try{
+     Response response = await Dio().put(
+        "http://wda.hopto.org:8066/api/clients",
+        options: Options(
+          headers:{ "Authorization": mainController.token, "Content-Type": "multipart/form-data", "accept":"*/*"},
+        ),
+        data: await client.toPostFormData()
+      );
+
+      log("**************** POST CLIENT SERVICE ****************");
+      log("RESPONSE DATA: ${response.data}");
+      log("STATUS CODE: ${response.statusCode}");
+      log("**************** POST CLIENT SERVICE ****************");
+
+    }on DioError catch(e){
+      log("POST CLIENT SERVICE: $e");
+    }
   }
 
 }

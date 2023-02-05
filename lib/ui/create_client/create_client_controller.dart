@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:locadora_de_livros/model/client.dart';
+import 'package:locadora_de_livros/service/client_service.dart';
 import 'package:locadora_de_livros/utils/app_colors.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:rxdart/rxdart.dart';
@@ -9,7 +10,7 @@ import 'package:rxdart/rxdart.dart';
 class CreateUserController{
 
   BehaviorSubject<Client> streamForm = BehaviorSubject<Client>();
-  BehaviorSubject<String> streamPopMenuButtonPosition = BehaviorSubject<String>();
+  BehaviorSubject<String?> streamPopMenuButtonPosition = BehaviorSubject<String?>();
   BehaviorSubject<bool> streamAddImage = BehaviorSubject<bool>();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -19,23 +20,33 @@ class CreateUserController{
   MaskTextInputFormatter cpfMask = MaskTextInputFormatter(mask: '###.###.###-##');
 
   TextEditingController nameController = TextEditingController();
-  TextEditingController profilePictureController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController cpfController = TextEditingController();
   TextEditingController birthDateController = TextEditingController();
-  TextEditingController positionController = TextEditingController();
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   
   String? position;
 
+  ClientService clientService = ClientService();
+
+   void clearAll(){
+    nameController.clear();
+    emailController.clear();
+    cpfController.clear();
+    birthDateController.clear();
+    usernameController.clear();
+    passwordController.clear();
+    streamAddImage.sink.add(false);
+    streamPopMenuButtonPosition.sink.add(null);
+   }
 
    void validationForm(Client client, BuildContext context){
-    log(client.toString());
+    client.toPostFormData().then((value) => print(value.fields));
     if(client.name == null || client.name!.isEmpty){
       alertSnackBar(context, "O nome do usuário está vazio.");
 
-    }else if(client.email == null || client.email!.isEmpty || !client.email!.contains("@")){
+    }else if(client.email == null || client.email!.isEmpty || !client.email!.contains("@") || !client.email!.contains(".com")){
       alertSnackBar(context, "O email do usuário está inválido.");
 
     }else if(client.cpf == null || client.cpf!.isEmpty || client.cpf!.length < 14 ){
@@ -50,13 +61,14 @@ class CreateUserController{
     }else if(client.userName == null || client.userName!.isEmpty){
       alertSnackBar(context, "O nome de login está vazio.");
 
-    }else if(client.password == null || client.password!.isEmpty){
-      alertSnackBar(context, "A senha não esta vazia.");
+    }else if(client.password == null || client.password!.isEmpty || client.password!.length < 6){
+      alertSnackBar(context, "A senha deve conter no mínimo 6 caracteres.");
     }
     else {
-      // insertMealDatabase(meal);
-      // Navigator.pop(context);
-       "Receita salva com sucesso!";
+      saveClient(client);
+      clearAll();
+      alertSnackBar(context, "Cliente cadastrado com sucesso", color: appColors.green);
+
     }
   }
 
@@ -69,8 +81,12 @@ class CreateUserController{
     return DateTime.parse("$year-$month-$day");
   }
 
-  ScaffoldFeatureController alertSnackBar(BuildContext context, String message){
-    return ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message), backgroundColor: appColors.red));
+  Future<void> saveClient(Client client) async{
+    clientService.postClient(client);
+  }
+
+  ScaffoldFeatureController alertSnackBar(BuildContext context, String message, {Color color = appColors.red}){
+    return ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message), backgroundColor: color));
   }
 
 }

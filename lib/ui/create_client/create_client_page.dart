@@ -109,7 +109,7 @@ class CreateClientPage extends StatelessWidget {
           child: TextFormField(
             onChanged: (value) {
               if(value.length == 10){
-                // client.birthDate = createUserController.convertStringToDateTime(value);
+                client.birthDate = createUserController.convertStringToDateTime(value);
               }
             },
             controller: createUserController.birthDateController,
@@ -125,7 +125,7 @@ class CreateClientPage extends StatelessWidget {
 
 
   Widget popMenuButtonPosition(Client client){
-    return StreamBuilder<String>(
+    return StreamBuilder<String?>(
       stream: createUserController.streamPopMenuButtonPosition.stream,
       builder: (context, snapshot) {
         return PopupMenuButton(
@@ -147,10 +147,11 @@ class CreateClientPage extends StatelessWidget {
             return [
               PopupMenuItem(onTap: (() {
                 client.position = "ADMINISTRADOR";
+                client.position = "ADMIN";
                 createUserController.streamPopMenuButtonPosition.sink.add("Admin");
               }), child: const  Text('Administrador')),
               PopupMenuItem(onTap: (() {
-                client.position = "CLIENTE";
+                client.position = "PEOPLE";
                 createUserController.streamPopMenuButtonPosition.sink.add("Cliente");
               }), child: const Text('Cliente')),
             ];
