@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:locadora_de_livros/model/client.dart';
+import 'package:locadora_de_livros/service/client_service.dart';
 import 'package:locadora_de_livros/utils/app_colors.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:rxdart/subjects.dart';
 
 class UpdateClientController{
+
+  ClientService clientService = ClientService();
 
   BehaviorSubject<Client> streamForm = BehaviorSubject<Client>();
   BehaviorSubject<String> streamPopMenuButtonPosition = BehaviorSubject<String>();
@@ -23,18 +26,21 @@ class UpdateClientController{
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  void initUpdatePage(Client client){
+  Future<void> initUpdatePage(String id) async{
+    Client client = await clientService.getClientById(id);
+    print("aaaaaaaaaaaaaaaaaaaaaaaaaaa: ${client.toString()}");
+
     nameController.text = client.name!;
     emailController.text = client.email!;
     cpfController.text = client.cpf!;
-    // birthDateController.text = client.birthDate!;
+    birthDateController.text = convertDateTimeToString(client.birthDate!);
     usernameController.text = client.userName!;
-    passwordController.text = client.password!;
-    streamPopMenuButtonPosition.sink.add(client.position!);
+    streamPopMenuButtonPosition.sink.add(client.position! == "PEOPLE" ? "Cliente" : "Admin");
     streamForm.sink.add(client);
   }
 
   void validationForm(Client client, BuildContext context){
+    print(client.toString());
     if(client.name == null || client.name!.isEmpty){
       alertSnackBar(context, "O nome do usuário está vazio.");
 
@@ -57,19 +63,22 @@ class UpdateClientController{
       alertSnackBar(context, "A senha está inválida.");
     }
     else {
+      updateClient(client);
       // insertMealDatabase(meal);
       // Navigator.pop(context);
     }
   }
 
-  DateTime convertStringToDateTime(String date){
-
-    String day = date.substring(0,2);
-    String month = date.substring(3,5);
-    String year = date.substring(6,10);
+    String convertDateTimeToString(DateTime date){
     
-    return DateTime.parse("$year-$month-$day");
+    String day = date.day.toString();
+    String month = date.month.toString();
+    String year = date.year.toString();
+    
+    return "$year-${month.padLeft(2,"0")}-${day.padLeft(2,"0")}";
   }
+
+  Future<void> updateClient(Client client) async => clientService.putClient(client);
 
   ScaffoldFeatureController alertSnackBar(BuildContext context, String message){
     return ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message), backgroundColor: appColors.red));

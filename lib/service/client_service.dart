@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:locadora_de_livros/model/client.dart';
 import 'package:locadora_de_livros/main_controller.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ClientService{
  MainController mainController = MainController();
@@ -15,6 +17,12 @@ class ClientService{
       if(response.data.isEmpty)return [];
       List<dynamic> listClient =  response.data;
       List<Client> clients = listClient.map((client) => Client.fromMap(client)).toList();
+      
+      log("**************** GET CLIENT SERVICE ****************");
+      log("RESPONSE DATA: ${response.data}");
+      log("STATUS CODE: ${response.statusCode}");
+      log("**************** GET CLIENT SERVICE ****************");
+
       return clients;
     }catch(e){
       log("ERRO PUBLISHING SERVICE $e");
@@ -52,17 +60,76 @@ class ClientService{
         options: Options(
           headers:{ "Authorization": mainController.token, "Content-Type": "multipart/form-data", "accept":"*/*"},
         ),
-        data: await client.toPostFormData()
+        data: {
+         "id": "beb54b23-70fd-454d-a5b7-525a59d0d16d",
+         "name": "MARIA DA SILVA BARRETO", 
+         "email": "Maria@gmail.com",
+          "birthDate":" 1999-01-21", 
+         "cpf": "411.639.920-54", 
+         "position": "PEOPLE",
+          "userUpdateRequest.username": "Maria@gmail.com",
+          "userUpdateRequest.password": "abcdefg"
+         }
       );
 
-      log("**************** POST CLIENT SERVICE ****************");
+      log("**************** PUT CLIENT SERVICE ****************");
       log("RESPONSE DATA: ${response.data}");
       log("STATUS CODE: ${response.statusCode}");
-      log("**************** POST CLIENT SERVICE ****************");
+      log("**************** PUT CLIENT SERVICE ****************");
 
     }on DioError catch(e){
-      log("POST CLIENT SERVICE: $e");
+      log("PUT CLIENT SERVICE: $e");
     }
   }
+
+ Future<Client> getClientById(String id) async{
+    try{
+     Response response = await Dio().get(
+        "http://wda.hopto.org:8066/api/clients/$id",
+        options: Options(contentType: 'application/json',headers:{ "Authorization": mainController.token}),
+      );
+
+      Directory appDocDir = await getApplicationDocumentsDirectory();
+      print(response.data['profilePicture']);
+      
+      String? imageName;
+      Response? responseDownload;
+
+      if(response.data['profilePicture'] != null){
+        imageName = response.data['profilePicture']['name'];
+        
+        responseDownload = await Dio().download(
+          "http://wda.hopto.org:8066/api/clients/$id",
+          "${appDocDir.path}/$imageName",
+          options: Options( headers:{ "Authorization": mainController.token})
+         );
+      }
+
+      Client client = Client.fromMap({
+        "id": response.data['id'],
+        "name": response.data['name'],
+        "email": response.data['email'],
+        "birthDate": DateTime.parse(response.data['birthDate']),
+        "cpf": response.data["cpf"],
+        "position": response.data['position'],
+        "profilePicture": imageName != null ? "${appDocDir.path}/$imageName" : null ,
+        "userCreateRequest.userName": response.data['user']['username'],
+      });
+
+      log("**************** GETBY ID CLIENT SERVICE ****************");
+      log("RESPONSE DATA: ${response.data}");
+      log("STATUS CODE: ${response.statusCode}");
+      log("******************************************************");
+      log("RESPONSE DOWNLOAD: ${responseDownload?.statusCode}");
+      log("**************** GETBY ID CLIENT SERVICE ****************");
+
+      return client;
+    }on DioError catch(e){
+      log("POST CLIENT SERVICE: $e");
+      return Client();
+    }
+  }
+
+
 
 }

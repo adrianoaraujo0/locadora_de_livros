@@ -25,8 +25,8 @@ class Client{
       cpf:map["cpf"],
       position: map['position'],
       profilePicture: map['profilePicture'],
-      userName: map['userCreateRequest.password'],
-      password: map['userCreateRequest.username'],
+      userName: map['userCreateRequest.userName'],
+      password: map['userCreateRequest.password'],
     );
   }
 
@@ -47,15 +47,16 @@ class Client{
   }
 
    Future<FormData> toPutFormData()async {
-    String fileName = profilePicture!.split('/').last;
+    // String fileName = profilePicture!.split('/').last;
 
     FormData data = FormData.fromMap({
+      'id': id,
       'name': name,
       'email': email,
       'birthDate': convertDateTimeToString(birthDate!),
       'cpf': cpf,
       'position': position,
-      'profilePicture': await MultipartFile.fromFile( profilePicture!, filename: fileName, contentType:  MediaType("image", "jpeg")),
+      // 'profilePicture': await MultipartFile.fromFile( profilePicture!, filename: fileName, contentType:  MediaType("image", "jpeg")),
       'userCreateRequest.password': password,
       'userCreateRequest.username': userName,
     });
@@ -76,7 +77,7 @@ class Client{
   @override
   String toString() {
     // TODO: implement toString
-    return "name: $name, email: $email, birthDate: $birthDate, cpf: $cpf, position: $position, img: $profilePicture, username: $userName, password: $password";
+    return "id: $id ,name: $name, email: $email, birthDate: $birthDate, cpf: $cpf, position: $position, img: $profilePicture, username: $userName, password: $password";
   }
 
 }

@@ -6,8 +6,8 @@ import 'package:locadora_de_livros/ui/update_client/update_client_controller.dar
 import 'package:locadora_de_livros/utils/app_colors.dart';
 
 class UpdateClientPage extends StatefulWidget {
-  UpdateClientPage({required this.client, super.key});
-  Client client;
+  UpdateClientPage({required this.idClient, super.key});
+  String idClient;
 
   @override
   State<UpdateClientPage> createState() => _UpdateClientPageState();
@@ -21,7 +21,7 @@ class _UpdateClientPageState extends State<UpdateClientPage> {
   @override
   void initState() {
     super.initState();
-    updateClientController.initUpdatePage(widget.client);    
+    updateClientController.initUpdatePage(widget.idClient);    
   }
 
 

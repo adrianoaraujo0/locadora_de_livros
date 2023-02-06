@@ -37,55 +37,57 @@ class _MenuPageState extends State<MenuPage> {
       drawer: const DrawerComponent(),
       appBar: const PreferredSize(preferredSize: Size.fromHeight(40), child: AppBarGlobal()),
       body:  Container( 
-        height: MediaQuery.of(context).size.height,
-        width:  MediaQuery.of(context).size.width,
+        height: double.maxFinite,
+        width:  double.maxFinite,
         color: appColors.white,
-        child: Column(
-          children: [
-            menu(),
-            dashboard(),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              menu(),
+              dashboard(),
+            ],
+          ),
         ),
       )
     );
   }
 
   Widget menu(){
-    return Expanded(
-      child: Container(
-        color: appColors.purple,
-        width:  MediaQuery.of(context).size.width,
-        child: StreamBuilder<Menu>(
-          stream: menuController.streamMenuController.stream,
-          builder: (context, snapshot) {
-            if(snapshot.data != null){
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+    return Container(
+      color: appColors.purple,
+      width:  MediaQuery.of(context).size.width,
+      padding: const EdgeInsets.symmetric(vertical: 25),
+      child: StreamBuilder<Menu>(
+        stream: menuController.streamMenuController.stream,
+        builder: (context, snapshot) {
+          if(snapshot.data != null){
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      cards("Usuários",  appColors.blue, snapshot.data?.quantityClients??0),
+                      const SizedBox(width: 10),
+                      cards("Livros",  appColors.green, snapshot.data?.quantityBooks??0)
+                    ],
+                  ),
+                  const SizedBox(height: 20),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        cards("Usuários",  appColors.blue, snapshot.data?.quantityClients??0),
-                        const SizedBox(width: 10),
-                        cards("Livros",  appColors.green, snapshot.data?.quantityBooks??0)
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                      Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        cards("Aluguéis",  appColors.yellow, snapshot.data?.quantityRents??0),
-                        const SizedBox(width: 10),
-                        cards("Editoras",  appColors.red, snapshot.data?.quantityPublishingCompanies??0),
-                      ],
-                    ),
-                  ]
-              );
-            }else{
-              return const Center(child: CircularProgressIndicator());
-            }
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      cards("Aluguéis",  appColors.yellow, snapshot.data?.quantityRents??0),
+                      const SizedBox(width: 10),
+                      cards("Editoras",  appColors.red, snapshot.data?.quantityPublishingCompanies??0),
+                    ],
+                  ),
+                ]
+            );
+          }else{
+            return const Center(child: CircularProgressIndicator());
           }
-        ),
+        }
       ),
     );
   }
@@ -117,36 +119,28 @@ class _MenuPageState extends State<MenuPage> {
   }
 
   Widget dashboard(){
-    return  Container(
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
-        color: Colors.white,
-      ),
-      height: (MediaQuery.of(context).size.height / 2) - MediaQuery.of(context).padding.top,
-      width: MediaQuery.of(context).size.width,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Column(
-          children: [
-             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-               children: [
-                 const Text("Livros mais alugados", style: TextStyle(fontSize: 25)),
-                 InkWell(
-                  child: Icon(Icons.more_horiz_outlined)
-                )
-               ],
-             ),
-             const SizedBox(height: 30),
-            //  graphicDashboard(),
-             const SizedBox(height: 10),
-             Row(
-              children: [
-                Container()
-              ],
-             ),
-          ],
-        ),
+    return  Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Column(
+        children: [
+           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+             children: const [
+              Text("Livros mais alugados", style: TextStyle(fontSize: 25)),
+              InkWell(
+                child: Icon(Icons.more_horiz_outlined)
+              )
+             ],
+           ),
+           const SizedBox(height: 30),
+           graphicDashboard(),
+           const SizedBox(height: 10),
+           Row(
+            children: [
+              Container()
+            ],
+           ),
+        ],
       ),
     );
   }
@@ -158,11 +152,12 @@ class _MenuPageState extends State<MenuPage> {
       builder: (context, snapshot) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
                 height: MediaQuery.of(context).size.height * 0.3,
-                width:  MediaQuery.of(context).size.width * 0.65,
+                width:  MediaQuery.of(context).size.width * 0.9,
                 decoration: BoxDecoration(border: Border.all(color: appColors.black)),
                 child: Center(
                   child: snapshot.data == null 
@@ -201,7 +196,7 @@ class _MenuPageState extends State<MenuPage> {
         AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             height: MediaQuery.of(context).size.height * (graphicBooks.quantity * 0.0025),
-            width: 20,
+            width: 30,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25)),
               color: color
@@ -212,28 +207,27 @@ class _MenuPageState extends State<MenuPage> {
   }
 
   Widget nameBook(List<GraphicBooks> listBooks){
-    return Expanded(
-      child: ListView.builder(
-        shrinkWrap: true,
-        itemCount: listBooks.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  width: 10,
-                  height: 10,
-                  color:  menuController.colorsDashBoard[index]
-                ),
-                const SizedBox(width: 3),
-                Expanded(child: Text(listBooks[index].nameBook))
-              ],
-            ),
-          );
-        },
-      ),
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: listBooks.length,
+      scrollDirection: Axis.horizontal,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 10,
+                height: 10,
+                color:  menuController.colorsDashBoard[index]
+              ),
+              const SizedBox(width: 3),
+              Expanded(child: Text(listBooks[index].nameBook))
+            ],
+          ),
+        );
+      },
     );
   }
 }
