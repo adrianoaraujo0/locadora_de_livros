@@ -20,14 +20,19 @@ class ListPublishingCompanyController{
   }
 
   void validationForm( BuildContext context) async{
-    if(publishingCompanyController.text.isEmpty){
-       formKey.currentState!.validate();
-    }else{
+    if(formKey.currentState!.validate()){
       savePublishingCompany(publishingCompanyController.text);
       publishingCompanyController.clear();
-      await initListPublishingCompanyController();
-      Navigator.pop(context);
+      await initListPublishingCompanyController().whenComplete(() {
+        Navigator.pop(context);
+      });
     }
+    // if(publishingCompanyController.text.isEmpty){
+    //    formKey.currentState!.validate();
+    // }else{
+    //   publishingCompanyController.clear();
+    //   Navigator.pop(context);
+    // }
   }
 
   Future<void> savePublishingCompany(String name) async{

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:locadora_de_livros/model/client.dart';
@@ -30,13 +32,12 @@ class _UpdateClientPageState extends State<UpdateClientPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: appColors.purple,
-        title: const Text("CADASTRO DE CLIENTE", style: TextStyle(color: appColors.white)),
+        title: const Text("EDITAR CLIENTE", style: TextStyle(color: appColors.white)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: appColors.white), 
           onPressed: ()async {
             FocusScope.of(context).unfocus();
             await Future.delayed( const Duration(milliseconds: 300)).whenComplete(() => Navigator.pop(context));
-           
           }
         ),
         centerTitle: true,
@@ -68,15 +69,68 @@ class _UpdateClientPageState extends State<UpdateClientPage> {
     );
   }
 
+    Widget addImage(Client client){
+    return StreamBuilder<String>(
+      stream: updateClientController.streamAddImage.stream,
+      initialData: "",
+      builder: (context, snapshot) {
+        if(snapshot.data == null || snapshot.data!.isEmpty){
+          return InkWell(
+            onTap: () async{
+              final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+              if(image != null){
+                client.profilePicture = image.path;
+                updateClientController.streamAddImage.sink.add(image.path);
+              }
+            } ,
+            child: Container(
+              decoration: const BoxDecoration(shape: BoxShape.circle,),
+              height: 150,
+              width: 150,
+              child: Image.asset("assets/images/user.png"),
+            ),
+          );
+        }else{
+          return InkWell(
+            onTap: () async{
+              final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+              if(image != null){
+                client.profilePicture = image.path;
+                updateClientController.streamAddImage.sink.add(image.path);
+              }
+            },
+            child: Container(
+              height: 170,
+              width: 170,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                image: DecorationImage(image: FileImage(File(snapshot.data!)), fit: BoxFit.fill)
+              ),
+            )
+          );
+        }
+      }, 
+    );
+  }
+
   Widget formUser(BuildContext context, Client client){
     return  Form(
       key: updateClientController.formKey,
       child: Column(
         children: [
+          // addImage(client),
+          const SizedBox(height: 20),
           TextFormField(
             decoration: const InputDecoration(hintText: "Nome do usuário", suffixIcon: Icon(Icons.person)),
             controller: updateClientController.nameController,
             onChanged: (value) => client.name = value,
+            validator: (value) {
+              if(value == null || value.isEmpty){
+                return "Nome vazio.";
+              }else{
+                return null;
+              }
+            },
           ),
           const SizedBox(height: 20),
           TextFormField(
@@ -84,6 +138,15 @@ class _UpdateClientPageState extends State<UpdateClientPage> {
             controller: updateClientController.emailController,
             keyboardType: TextInputType.emailAddress,
             onChanged: (value) => client.email = value,
+              validator: (value) {
+              if(value == null || value.isEmpty){
+                return "Email vazio";
+              }else if(!value.contains("@") || !value.contains(".com")){
+                return "Email inválido.";
+              }else{
+                return null;
+              }
+            },
           ),
           const SizedBox(height: 20),
           TextFormField(
@@ -92,23 +155,68 @@ class _UpdateClientPageState extends State<UpdateClientPage> {
             keyboardType: TextInputType.number,
             inputFormatters: [updateClientController.cpfMask],
             onChanged: (value) => client.cpf = value,
+             validator: (value) {
+              if(value == null || value.isEmpty){
+                return "cpf vazio.";
+              }else if(value.length < 14){
+                return "cpf inválido.";
+              }else{
+                return null;
+              }
+            },
           ),
           const SizedBox(height: 20),
-          textFormFieldDateAndPosition(context, client),
+           TextFormField(
+            onChanged: (value) {
+              if(value.length == 10){
+                client.birthDate = updateClientController.convertStringToDateTime(value);
+              }
+            },
+            validator: (value) {
+              if(value == null || value.isEmpty){
+                return "Data vazia";
+              }else if(value.length < 10){
+                return "Insira uma data válida";
+              }else{
+                return null;
+              }
+            },
+            controller: updateClientController.birthDateController,
+            keyboardType: TextInputType.datetime,
+            inputFormatters: [updateClientController.birthDateMask],
+              decoration: const InputDecoration(hintText: "Data de nascimento", suffixIcon: Icon(Icons.date_range)),
+          ),
           const SizedBox(height: 20),
           TextFormField(
-            decoration: const InputDecoration(hintText: "Nome de login", suffixIcon: Icon(Icons.person)),
+            decoration: const InputDecoration(hintText: "Email de login", suffixIcon: Icon(Icons.person)),
             controller: updateClientController.usernameController,
             onChanged: (value) => client.userName = value,
+            validator: (value) {
+              if(value == null || value.isEmpty){
+                return "Email de login vazio";
+              }else if(!value.contains("@") || !value.contains(".com")){
+                return "Email de login inválido.";
+              }else{
+                return null;
+              }
+            },
           ),
           const SizedBox(height: 20),
           TextFormField(
             decoration: const InputDecoration(hintText: "Senha do usuário", suffixIcon: Icon(Icons.lock)),
             controller: updateClientController.passwordController,
             onChanged: (value) => client.password = value,
+            validator: (value){
+              if(value == null || value.isEmpty){
+                return "Senha vazia";
+              }else if(value.length < 6){
+                return "A senha deve ter no mínimo 6 caracteres.";
+              }else{
+                return null;
+              }
+            },
           ),
           const SizedBox(height: 20),
-          addImage(client)
         ],
       ),
     );
@@ -133,7 +241,6 @@ class _UpdateClientPageState extends State<UpdateClientPage> {
               decoration: const InputDecoration(hintText: "Data de nascimento", suffixIcon: Icon(Icons.date_range)),
           ),
         ),
-       popMenuButtonPosition(client),
       ],
     );
   }
@@ -171,59 +278,6 @@ class _UpdateClientPageState extends State<UpdateClientPage> {
           }, 
         );
       }
-    );
-  }
-
-  Widget addImage(Client client){
-    return StreamBuilder<bool>(
-      stream: updateClientController.streamAddImage.stream,
-      initialData: false,
-      builder: (context, snapshot) {
-        if(snapshot.data == false){
-          return InkWell(
-            onTap: () async{
-              final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-              if(image != null){
-                client.profilePicture = image.path;
-                updateClientController.streamAddImage.sink.add(true);
-              }
-            } ,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: const [
-                Icon(Icons.image, color: appColors.grey, size: 45),
-                SizedBox(width: 5),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 4),
-                  child: Text("Adicione uma foto", style: TextStyle(fontSize: 20)),
-                )
-              ],
-            ),
-          );
-        }else{
-          return InkWell(
-            onTap: () async{
-              final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-              if(image != null){
-                client.profilePicture = image.path;
-              }
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: const [
-                Icon(Icons.image, color: appColors.green, size: 45),
-                SizedBox(width: 5),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 4),
-                  child: Text("Foto adicionada", style: TextStyle(fontSize: 20)),
-                )
-              ],
-            ),
-          );
-        }
-      }, 
     );
   }
 

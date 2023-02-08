@@ -124,7 +124,13 @@ class _ListClientPageState extends State<ListClientPage> {
             ),
           ),
           InkWell(
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateClientPage(idClient: client.id!))),
+            onTap: () {
+              Navigator.push(
+                context, MaterialPageRoute(
+                  builder: (context) => UpdateClientPage(idClient: client.id!)
+                )
+              ).then((_) async => await listClientController.initListClientPage());
+            },
             child: const Padding(
               padding: EdgeInsets.all(8.0),
               child: Icon(Icons.edit, color: appColors.grey),

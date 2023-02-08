@@ -11,7 +11,7 @@ class CreateUserController{
 
   BehaviorSubject<Client> streamForm = BehaviorSubject<Client>();
   BehaviorSubject<String?> streamPopMenuButtonPosition = BehaviorSubject<String?>();
-  BehaviorSubject<bool> streamAddImage = BehaviorSubject<bool>();
+  BehaviorSubject<String> streamAddImage = BehaviorSubject<String>();
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final myFocusNodes = FocusNode();
@@ -37,39 +37,45 @@ class CreateUserController{
     birthDateController.clear();
     usernameController.clear();
     passwordController.clear();
-    streamAddImage.sink.add(false);
+    streamAddImage.sink.add("");
     streamPopMenuButtonPosition.sink.add(null);
    }
 
    void validationForm(Client client, BuildContext context){
-    client.toPostFormData().then((value) => print(value.fields));
-    if(client.name == null || client.name!.isEmpty){
-      alertSnackBar(context, "O nome do usuário está vazio.");
+    // client.toPostFormData().then((value) => print(value.fields));
+      
 
-    }else if(client.email == null || client.email!.isEmpty || !client.email!.contains("@") || !client.email!.contains(".com")){
-      alertSnackBar(context, "O email do usuário está inválido.");
+    // if(client.name == null || client.name!.isEmpty){
+    //   // alertSnackBar(context, "O nome do usuário está vazio.");
+    //   formKey.currentState!.validate();
 
-    }else if(client.cpf == null || client.cpf!.isEmpty || client.cpf!.length < 14 ){
-      alertSnackBar(context, "O cpf do usuário está inválido.");
+    // }else if(client.email == null || client.email!.isEmpty || !client.email!.contains("@") || !client.email!.contains(".com")){
+    //   alertSnackBar(context, "O email do usuário está inválido.");
 
-    }else if(client.birthDate == null){
-      alertSnackBar(context, "A data de nascimento está incorreta.");
+    // }else if(client.cpf == null || client.cpf!.isEmpty || client.cpf!.length < 14 ){
+    //   alertSnackBar(context, "O cpf do usuário está inválido.");
 
-    }else if(client.position == null || client.position!.isEmpty){
-      alertSnackBar(context, "O cargo não foi selecionado.");
+    // }else if(client.birthDate == null){
+    //   alertSnackBar(context, "A data de nascimento está incorreta.");
 
-    }else if(client.userName == null || client.userName!.isEmpty){
-      alertSnackBar(context, "O nome de login está vazio.");
+    // }else if(client.position == null || client.position!.isEmpty){
+    //   alertSnackBar(context, "O cargo não foi selecionado.");
 
-    }else if(client.password == null || client.password!.isEmpty || client.password!.length < 6){
-      alertSnackBar(context, "A senha deve conter no mínimo 6 caracteres.");
-    }
-    else {
+    // }else if(client.userName == null || client.userName!.isEmpty){
+    //   alertSnackBar(context, "O nome de login está vazio.");
+
+    // }else if(client.password == null || client.password!.isEmpty || client.password!.length < 6){
+    //   alertSnackBar(context, "A senha deve conter no mínimo 6 caracteres.");
+    // }
+    if(formKey.currentState!.validate()){
       saveClient(client);
       clearAll();
       alertSnackBar(context, "Cliente cadastrado com sucesso", color: appColors.green);
-
     }
+    // else {
+      
+
+    // }
   }
 
   DateTime convertStringToDateTime(String date){

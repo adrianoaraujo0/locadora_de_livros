@@ -55,21 +55,25 @@ class ClientService{
 
  Future<void> putClient(Client client) async{
     try{
-     Response response = await Dio().put(
-        "http://wda.hopto.org:8066/api/clients",
-        options: Options(
-          headers:{ "Authorization": mainController.token, "Content-Type": "multipart/form-data", "accept":"*/*"},
-        ),
-        data: {
-         "id": "beb54b23-70fd-454d-a5b7-525a59d0d16d",
-         "name": "MARIA DA SILVA BARRETO", 
+      FormData formData = FormData.fromMap(
+        {
+          "id": "beb54b23-70fd-454d-a5b7-525a59d0d16d",
+         "name": "MARIA SILVA BARRETO", 
          "email": "Maria@gmail.com",
-          "birthDate":" 1999-01-21", 
+          "birthDate": "1999-01-21", 
          "cpf": "411.639.920-54", 
          "position": "PEOPLE",
           "userUpdateRequest.username": "Maria@gmail.com",
-          "userUpdateRequest.password": "abcdefg"
-         }
+          "userUpdateRequest.password": "12345678",
+          "userUpdateRequest.id":"7f0b39c3-ee9c-4d8b-8bfc-ab1d46981e0c"
+        }
+      );
+     Response response = await Dio().put(
+        "http://wda.hopto.org:8066/api/clients",
+        options: Options(
+          headers:{ "Authorization": mainController.token, "Content-Type": "*/*", "accept":"*/*"},
+        ),
+        data: await client.toPutFormData()
       );
 
       log("**************** PUT CLIENT SERVICE ****************");
@@ -104,7 +108,6 @@ class ClientService{
           options: Options( headers:{ "Authorization": mainController.token})
          );
       }
-
       Client client = Client.fromMap({
         "id": response.data['id'],
         "name": response.data['name'],
@@ -114,9 +117,11 @@ class ClientService{
         "position": response.data['position'],
         "profilePicture": imageName != null ? "${appDocDir.path}/$imageName" : null ,
         "userCreateRequest.userName": response.data['user']['username'],
+        "userUpdateRequest.id": response.data['user']['id']
       });
 
       log("**************** GETBY ID CLIENT SERVICE ****************");
+      log("UserId: ${client.toString()}}");
       log("RESPONSE DATA: ${response.data}");
       log("STATUS CODE: ${response.statusCode}");
       log("******************************************************");

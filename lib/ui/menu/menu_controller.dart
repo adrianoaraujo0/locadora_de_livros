@@ -16,6 +16,8 @@ class MenuController{
 
   BehaviorSubject<Menu> streamMenuController = BehaviorSubject<Menu>();
   BehaviorSubject<List<GraphicBooks>> streamGraphicBooks = BehaviorSubject<List<GraphicBooks>>();
+   BehaviorSubject<List<Rent>> streamRents = BehaviorSubject<List<Rent>>();
+
   List<Color> colorsDashBoard = [appColors.green, appColors.yellow, appColors.grey, appColors.red, appColors.purpleDark, appColors.blue];
 
   ClientService clientService = ClientService();
@@ -24,12 +26,14 @@ class MenuController{
   PublishingCompaniesService publishingCompaniesService = PublishingCompaniesService();
   Menu menu = Menu();
 
+  List<Rent> rents = [];
+
   Future<void> initMenu() async{
     await getQuantityBooks();
+    await getQuantityRent();
     await getQuantityPublishingCompanies();
     await getQuantityClient();
-    await getQuantityRent();
-    streamGraphicBooks.sink.add(
+     streamGraphicBooks.sink.add(
       [
         GraphicBooks("O contato", 5),
         GraphicBooks("Naruto HQ", 20),
@@ -39,6 +43,7 @@ class MenuController{
         GraphicBooks("A revolução dos bichos", 40),
       ]
     );
+    streamRents.sink.add(rents);
   }
 
   Future<void> getQuantityBooks() async{
@@ -60,11 +65,20 @@ class MenuController{
   }
 
   Future<void> getQuantityRent() async{
-    List<Rent> rents = await rentService.getRents();
+    rents = await rentService.getRents();
     menu.quantityRents = rents.length;
     streamMenuController.sink.add(menu);
   }
 
- 
+    String convertRentStatus(String rentStatus){
+    if(rentStatus == "DELAY"){
+      return "Atrasado";
+    }if(rentStatus == "ONTIME"){
+      return "Devolvido";
+    }else{
+      return "Em espera";
+    }
+  }
+
 
 }

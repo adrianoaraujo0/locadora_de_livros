@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.locadora_de_livros">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="locadora_de_livros"
         android:name="${applicationName}"

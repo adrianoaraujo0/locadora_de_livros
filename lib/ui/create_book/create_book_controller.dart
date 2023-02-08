@@ -16,6 +16,7 @@ class CreateBookController{
   BehaviorSubject<Book> streamForm = BehaviorSubject<Book>();
   BehaviorSubject<List<PublishingCompany>> streamPopMenuButtonPublishingCompanies = BehaviorSubject<List<PublishingCompany>>();
   BehaviorSubject<String> streamTextPopMenuButtonPublishingCompanies = BehaviorSubject<String>();
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   BooksService booksService = BooksService();
   PublishingCompaniesService publishingCompaniesService = PublishingCompaniesService();
@@ -44,34 +45,43 @@ class CreateBookController{
   }
 
    void validationForm(Book book, BuildContext context){
-    log("${book.quantity}");
-    if(book.title == null || book.title!.isEmpty){
-      alertSnackBar(context, "O título do livro está vazio.");
 
-    }else if(book.author == null || book.author!.isEmpty){
-      alertSnackBar(context, "O nome do author vazio.");
+    // if(book.title == null || book.title!.isEmpty){
+    //   alertSnackBar(context, "O título do livro está vazio.");
 
-    }else if(book.releaseDate == null){
-      alertSnackBar(context, "A data de lançamento está incorreta.");
+    // }else if(book.author == null || book.author!.isEmpty){
+    //   alertSnackBar(context, "O nome do author vazio.");
 
-    }else if(book.releaseDate!.isAfter(DateTime.now())){
-      alertSnackBar(context, "A data de lançamento não pode ser depois da data atual.");
+    // }else if(book.releaseDate == null){
+    //   alertSnackBar(context, "A data de lançamento está incorreta.");
 
-    }else if(book.quantity == null){
-      alertSnackBar(context, "A quantidade está vazia.");
+    // }else if(book.releaseDate!.isAfter(DateTime.now())){
+    //   alertSnackBar(context, "A data de lançamento não pode ser depois da data atual.");
 
-    }else if(book.quantity == 0 || book.quantity! > 100){
-      alertSnackBar(context, "A quantidade não pode ser 0 ou maior que de 100.");
+    // }else if(book.quantity == null){
+    //   alertSnackBar(context, "A quantidade está vazia.");
+
+    // }else if(book.quantity == 0 || book.quantity! > 100){
+    //   alertSnackBar(context, "A quantidade não pode ser 0 ou maior que de 100.");
+    // }
+    // else if(book.publishingCompanyId == null){
+    //   alertSnackBar(context, "Escolha uma editora.");
+    // }
+    // else {
+    //   saveBook(book);
+    //   clearAll();
+    //   alertSnackBar(context, "Livro cadastrado com sucesso!", color: appColors.green);
+    // }
+      if(formKey.currentState!.validate()){
+        if(book.publishingCompanyId == null){
+          alertSnackBar(context, "Escolha uma editora.");
+        }else{
+           saveBook(book);
+           clearAll();
+           alertSnackBar(context, "Livro cadastrado com sucesso!", color: appColors.green);
+        }
+      } 
     }
-    else if(book.publishingCompanyId == null){
-      alertSnackBar(context, "Escolha uma editora.");
-    }
-    else {
-      saveBook(book);
-      clearAll();
-      alertSnackBar(context, "Livro cadastrado com sucesso!", color: appColors.green);
-    }
-  }
 
 
 

@@ -121,26 +121,17 @@ class _MenuPageState extends State<MenuPage> {
   Widget dashboard(){
     return  Padding(
       padding: const EdgeInsets.symmetric(vertical: 20),
-      child: Column(
-        children: [
-           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-             children: const [
-              Text("Livros mais alugados", style: TextStyle(fontSize: 25)),
-              InkWell(
-                child: Icon(Icons.more_horiz_outlined)
-              )
-             ],
-           ),
-           const SizedBox(height: 30),
-           graphicDashboard(),
-           const SizedBox(height: 10),
-           Row(
-            children: [
-              Container()
-            ],
-           ),
-        ],
+      child: Container(
+        width: double.maxFinite,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+             const SizedBox(height: 15),
+             graphicDashboard(),
+             const SizedBox(height: 30),
+             rentDashboard()
+          ],
+        ),
       ),
     );
   }
@@ -148,21 +139,20 @@ class _MenuPageState extends State<MenuPage> {
   Widget graphicDashboard(){
     return StreamBuilder<List<GraphicBooks>>(
       stream: menuController.streamGraphicBooks.stream,
-      initialData: null,
+      initialData: [],
       builder: (context, snapshot) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              const Text("Livros mais alugados", style: TextStyle(fontSize: 25)),
               Container(
-                height: MediaQuery.of(context).size.height * 0.3,
+                height: MediaQuery.of(context).size.height * 0.35,
                 width:  MediaQuery.of(context).size.width * 0.9,
                 decoration: BoxDecoration(border: Border.all(color: appColors.black)),
                 child: Center(
-                  child: snapshot.data == null 
-                   ? const SizedBox()
-                   : listViewBooks(snapshot.data!)
+                  child:  listViewBooks(snapshot.data!)
                 ),
               ),
               nameBook(snapshot.data!)
@@ -207,27 +197,165 @@ class _MenuPageState extends State<MenuPage> {
   }
 
   Widget nameBook(List<GraphicBooks> listBooks){
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: listBooks.length,
-      scrollDirection: Axis.horizontal,
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+      child:  Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: 10,
-                height: 10,
-                color:  menuController.colorsDashBoard[index]
-              ),
-              const SizedBox(width: 3),
-              Expanded(child: Text(listBooks[index].nameBook))
+            height: 10,
+            width: 20,
+            color: menuController.colorsDashBoard[0],
+          ),
+          const SizedBox(width: 3),
+          Text("O contato"),
+          const SizedBox(width: 3),
+          Container(
+            height: 10,
+            width: 20,
+            color: menuController.colorsDashBoard[1],
+          ),
+          const SizedBox(width: 3),
+          Text("O sol é para todo"),
+          const SizedBox(width: 3),
+          Container(
+            height: 10,
+            width: 20,
+            color: menuController.colorsDashBoard[2],
+          ),
+          const SizedBox(width: 3),
+           const SizedBox(width: 3),
+          Text("Naruto HQ"),
             ],
           ),
-        );
-      },
+          SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+            height: 10,
+            width: 20,
+            color: menuController.colorsDashBoard[3],
+          ),
+          const SizedBox(width: 3),
+          Text("On the road"),
+          const SizedBox(width: 3),
+          Container(
+            height: 10,
+            width: 20,
+            color: menuController.colorsDashBoard[4],
+          ),
+          const SizedBox(width: 3),
+          Text("A revolução dos bichos"),
+          const SizedBox(width: 3),
+          Container(
+            height: 10,
+            width: 20,
+            color: menuController.colorsDashBoard[5],
+          ),
+          const SizedBox(width: 3),
+           const SizedBox(width: 3),
+          Text("1984"),
+            ],
+          )
+        ],
+      ),
     );
   }
+
+  Widget rentDashboard(){
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Text("Últimos de aluguéis", style: TextStyle(fontSize: 25)),
+          Container(
+            height: MediaQuery.of(context).size.height * 0.4,
+            width:  MediaQuery.of(context).size.width * 0.9,
+            decoration: BoxDecoration(border: Border.all(color: appColors.black)),
+            child: Center(
+              child: StreamBuilder<List<Rent>>(
+                initialData: null,
+                stream: menuController.streamRents.stream,
+                builder: (context, snapshot) {
+                  if(snapshot.data == null){
+                    return const Center(child: CircularProgressIndicator());
+                  }else if(snapshot.data!.isEmpty){
+                    return const Center(child: Text("Nenhum livro foi cadastrado.", style: TextStyle(fontSize: 25)));
+                  }else{
+                    return Container(
+                      height: MediaQuery.of(context).size.height * 0.8,
+                      width: MediaQuery.of(context).size.width,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: snapshot.data!.length > 5 ?5 : snapshot.data!.length,
+                        itemBuilder:(context, index) {
+                          return itemListViewRent(snapshot.data![index] ,index);
+                        }, 
+                      ),
+                    );
+                  }
+                }
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+    Widget itemListViewRent(Rent rent ,int index){
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            height: 40,
+            width: 40,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(30),color: appColors.purple),
+            child: Center(child: Text("${index + 1}", style: const TextStyle(color: appColors.white))),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Cliente: ${rent.nameClient}", style: const TextStyle(fontSize: 17)),
+                const SizedBox(height: 5),
+                Text("Livro: ${rent.nameBook}", style: const TextStyle(fontSize: 17)),
+                const SizedBox(height: 5),
+                Row(
+                  children: [
+                    Text("Status: ",  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+                    const SizedBox(width: 5,),
+                    Text(
+                      menuController.convertRentStatus(rent.rentStatus!), 
+                      style: TextStyle(fontSize: 15, color: validationColorStatus(rent.rentStatus!))
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 5),
+              ],
+            ),
+          ),
+        ]
+      ),
+    );
+  }
+
+    Color validationColorStatus(String rentStatus){
+    if(rentStatus == "DELAY"){
+      return appColors.red;
+    }if(rentStatus == "ONTIME"){
+      return appColors.green;
+    }else{
+      return appColors.yellow;
+    } 
+  }
+
+
 }
